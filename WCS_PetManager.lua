@@ -8,32 +8,35 @@ WCS.PetManager = WCS.PetManager or {}
 local PM = WCS.PetManager
 
 function PM:OnUpdate()
-    -- Class guard: Pet AI only for Warlock and Hunter
-    if WCS.ClassEngine then
-        local cls = WCS.ClassEngine.class
-        if cls and cls ~= "WARLOCK" and cls ~= "HUNTER" then return end
-    end
+    -- Solo para Brujos y Cazadores
+    local cls = WCS.ClassEngine and WCS.ClassEngine.class
+    if cls and cls ~= "WARLOCK" and cls ~= "HUNTER" then return end
 
-    -- Integration with the new UI Config persistence
-    if not WCS_BrainSaved or not WCS_BrainSaved.Config or not WCS_BrainSaved.Config.PetManager then return end
     if not UnitExists("pet") then return end
     
-    -- [1] Basic Health Check
+    -- [1] DELEGACIÓN AL MOTOR AVANZADO (Si es Brujo)
+    -- Esto evita que el bucle básico pise las decisiones tácticas del PetAI
+    if cls == "WARLOCK" and WCS_BrainPetAI and WCS_BrainPetAI.PetAI then
+        -- El PetAI ya tiene su propio OnUpdate interno (0.5s), 
+        -- pero aquí aseguramos que nada del PetManager básico interfiera.
+        if WCS_BrainPetAI.PetAI.ENABLED then
+            return -- Si PetAI está activo, él toma el control total
+        end
+    end
+
+    -- [2] Lógica básica para Cazadores o si PetAI está apagado
+    if not WCS_BrainSaved or not WCS_BrainSaved.Config or not WCS_BrainSaved.Config.PetManager then return end
+    
     local petMaxHP = UnitHealthMax("pet")
     if petMaxHP <= 0 then return end
     local hp = (UnitHealth("pet") / petMaxHP) * 100
+    
+    -- Curación básica
     if hp < 40 and not UnitAffectingCombat("player") then
-        WCS:Log("Pet HP bajo (" .. math.floor(hp) .. "%). Intentando curar...")
         if WCS.SpellManager then WCS.SpellManager:Cast("Health Funnel") end
     end
     
-    -- [2] Aggro Management (Passive on low HP)
-    if hp < 20 and UnitAffectingCombat("pet") then
-        PetPassiveMode()
-        PetFollow()
-    end
-    
-    -- [3] Auto-Attack
+    -- Ataque básico
     if UnitExists("target") and UnitCanAttack("player", "target") and not UnitAffectingCombat("pet") then
         PetAttack()
     end

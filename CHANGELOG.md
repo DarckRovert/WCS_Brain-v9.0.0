@@ -4,6 +4,14 @@ Todas las versiones notables de este proyecto serán documentadas en este archiv
 
 ---
 
+## [8.2.0] - Marzo 24, 2026
+### 🧠 INTELIGENCIA TÁCTICA GOD-TIER
+- **Smart Dispel (Felhunter)**: Priorización dinámica de debuffs (CC > Silencio > Daño).
+- **Sistema de Peeling (Voydwalker)**: Intercepción reactiva de atacantes para proteger al Warlock.
+- **Rastreador de Casteo 1.12**: Implementado fallback autónomo vía Combat Log para identificar hechizos enemigos.
+- **Ejecución Nativa (v8.1.0)**: Migración completa a `CastPetAction` garantizando 100% obediencia técnica.
+- **Unificación de Motores**: El `PetManager` básico ahora delega toda la táctica al cerebro avanzado.
+
 ## [8.0.0] - Marzo 22, 2026
 ### 🏆 EVOLUCIÓN GOD-TIER
 - **Soporte Multi-Clase Universal**: Integración del `WCS_ClassEngine` y `WCS_ClassRotations`. La IA ahora detecta la raza y clase (las 9 disponibles) y ejecuta rotaciones con mitigación de daño, sin depender de Warlocks.

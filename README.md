@@ -1,10 +1,10 @@
-# WCS_Brain v8.0.0 🧠✨
+# WCS_Brain v8.2.0 🧠✨
 
 **Addon Core de Hermandad Exclusivo de "El Séquito del Terror"** 💀⚔️
 
 Addon modular avanzado para Turtle WoW (1.12) que implementa un sistema de IA ultra-inteligente, soporte **Multi-Clase (9 clases)**, gestión avanzada de recursos, aprendizaje automático y un Hub de Comando unificado.
 
-## 🚀 REARQUITECTURA MAYOR v8.0.0 [God-Tier Upgrade]
+## 🚀 REARQUITECTURA MAYOR v8.2.0 [God-Tier Upgrade]
 **Estado:** ✅ OPERATIVO - Compatibilidad Multi-Clase y Deep Void UX
 **v8 Integration:** Todo el sistema Predictivo y Holográfico ha sido reescrito para soportar **TODAS las clases** del juego (Warriors, Mages, Priests, Rogues, Hunters, Shamans, Druids, Paladins, Warlocks) con motores heurísticos dedicados.
 

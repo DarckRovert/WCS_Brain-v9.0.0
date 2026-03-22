@@ -116,6 +116,9 @@ PetAI.GuardianTarget = nil  -- Nombre del jugador a proteger
 PetAI.GuardianLastCheck = 0
 PetAI.GuardianCheckInterval = 0.5  -- Revisar cada 0.5 segundos
 
+-- Tabla para rastrear casteos enemigos en 1.12 (Combat Log fallback)
+PetAI.EnemyCastingTable = {}
+
 -- Configuración de comportamiento por modo
 PetAI.ModeConfig = {
     [1] = {  -- Agresivo
@@ -498,29 +501,25 @@ end
 function PetAI:ExecuteAbility(spellName)
     if not spellName then return false end
     if not self:CanCastPetAbility(spellName) then return false end
+    
     local success = false
-    if CastSpellByName then
+    local slot = self:GetPetAbilitySlot(spellName)
+    
+    -- PRIORIDAD 1: CastPetAction (Nativo y robusto para 1.12)
+    if slot then
+        CastPetAction(slot)
+        success = true
+        self:DebugPrint("[Execute] " .. spellName .. " - CastPetAction(" .. slot .. ")")
+    -- PRIORIDAD 2: CastSpellByName (Solo como fallback para hechizos del jugador como Enslave)
+    elseif CastSpellByName then
         CastSpellByName(spellName)
         success = true
         self:DebugPrint("[Execute] " .. spellName .. " - CastSpellByName")
-    else
-        local slot = self:GetPetAbilitySlot(spellName)
-        if slot then
-            CastPetAction(slot)
-            success = true
-            self:DebugPrint("[Execute] " .. spellName .. " - CastPetAction(" .. slot .. ")")
-        else
-            local cmd = "/cast " .. tostring(spellName)
-            if ChatFrameEditBox then
-                ChatFrameEditBox:SetText(cmd)
-                ChatEdit_SendText(ChatFrameEditBox)
-                success = true
-                self:DebugPrint("[Execute] " .. spellName .. " - ChatFrame (obsoleto)")
-            end
-        end
     end
+    
     if success then
-        self:SetCooldown(spellName, 1.5)
+        -- Cooldown interno: Respetar 1s de GCD global de pets en 1.12
+        self:SetCooldown(spellName, 1.0)
     end
     return success
 end
@@ -858,22 +857,16 @@ function PetAI:EvaluateVoidwalker()
         return self:ExecuteAbility("Sacrifice")
     end
     
-    -- PRIORIDAD 2: Sacrificio inteligente - Voidwalker a punto de morir
-    -- Mejor convertirse en escudo util que morir sin dar nada
-    if cfg.smartSacrifice then
-        local sacrificeThreshold = cfg.voidwalkerSacrificeHP or 15
-        
-        if petHP < sacrificeThreshold and inCombat then
-            -- Verificar que el sacrificio sea util (jugador no esta al 100%)
-            if playerHP < 90 then
-                self:Print("|cffff6600SACRIFICIO INTELIGENTE!|r Voidwalker HP: " .. string.format("%.0f", petHP) .. "% - Convirtiendome en escudo!")
-                return self:ExecuteAbility("Sacrifice")
-            else
-                self:DebugPrint("Voidwalker moribundo pero jugador al " .. string.format("%.0f", playerHP) .. "% - no sacrifico")
-            end
+        -- PRIORIDAD 2: Peeling - Proteger al jugador de atacantes directos
+    if inCombat and not self:IsOnCooldown("Suffering") then
+        if UnitExists("targettarget") and UnitIsUnit("targettarget", "player") then
+             if self:ShouldUseDefensive() then
+                self:SetCooldown("Suffering", 120)
+                self:Print("|cffff6600¡PEELING!|r Quitando aggro de tu atacante")
+                return self:ExecuteAbility("Suffering")
+             end
         end
     end
-    
     -- PRIORIDAD 3: Suffering para quitar aggro del jugador
     if playerHP < 50 and inCombat then
         if not self:IsOnCooldown("Suffering") then
@@ -1017,32 +1010,21 @@ function PetAI:EvaluateFelhunter()
         end
     end
     
-    -- PRIORIDAD 2: Devour Magic en jugador (debuffs magicos)
-    if self:HasMagicDebuff("player") then
-        if not self:IsOnCooldown("Devour Magic") then
-            -- Verificar modo: Devour Magic (aliado) es habilidad de SOPORTE
-            if not self:ShouldUseSupport() then
-                self:DebugPrint("[Felhunter] Modo actual no permite Devour Magic en aliados")
-                return false
-            end
-            self:SetCooldown("Devour Magic", 8)
-            self:Print("|cff9370DBDevour Magic!|r Quitando debuff del jugador")
-            return self:ExecuteAbility("Devour Magic")
-        end
-    end
+        -- PRIORIDAD 2: Devour Magic Inteligente (Jugador o Aliado Protegido)
+    local protectUnits = {"player"}
+    if self.GuardianTarget then table.insert(protectUnits, self.GuardianTarget) end
     
-    -- PRIORIDAD 3: Devour Magic en miembros del grupo
-    local debuffedMember = self:FindGroupMemberWithMagicDebuff()
-    if debuffedMember then
-        if not self:IsOnCooldown("Devour Magic") then
-            -- Verificar modo: Devour Magic (grupo) es habilidad de SOPORTE
-            if not self:ShouldUseSupport() then
-                self:DebugPrint("[Felhunter] Modo actual no permite Devour Magic en grupo")
-                return false
+    for _, unit in pairs(protectUnits) do
+        local priority = self:GetDebuffPriority(unit)
+        if priority > 0 then
+            if not self:IsOnCooldown("Devour Magic") then
+                if self:ShouldUseSupport() then
+                    self:SetCooldown("Devour Magic", 8)
+                    local name = UnitName(unit) or "Aliado"
+                    if priority == 3 then self:Print("|cffff0000¡EMERGENCIA!|r Quitando CC de " .. name) end
+                    return self:ExecutePetAbilityOnTarget("Devour Magic", unit, name)
+                end
             end
-            self:SetCooldown("Devour Magic", 8)
-            self:Print("|cff9370DBDevour Magic!|r Quitando debuff de " .. tostring(debuffedMember.name))
-            return self:ExecutePetAbilityOnTarget("Devour Magic", debuffedMember.unit, debuffedMember.name)
         end
     end
     
@@ -1079,46 +1061,47 @@ end
 function PetAI:IsEnemyCasting(unit)
     if not UnitExists(unit) then return false end
     
-    -- En WoW 1.12, usamos CastingInfo si esta disponible
-    -- o verificamos el nombre del spell siendo casteado
-    local spellName = UnitCastingInfo and UnitCastingInfo(unit)
-    if spellName then
-        return true
+    -- 1. Intentar usar API extendida (addons como ClassicCastBars la proveen)
+    if UnitCastingInfo then
+        local spellName = UnitCastingInfo(unit)
+        if spellName then return true end
     end
     
-    -- Fallback: verificar por textura de casting bar (menos confiable)
-    -- Algunos addons exponen esta info
-    if CastingBarFrame and CastingBarFrame:IsVisible() then
-        -- Esto es para el jugador, no enemigos
+    -- 2. Fallback: Verificación vía Combat Log (Propio de WCS_Brain)
+    local name = UnitName(unit)
+    if name and self.EnemyCastingTable and self.EnemyCastingTable[name] then
+        local castData = self.EnemyCastingTable[name]
+        if GetTime() < castData.endTime then
+            return true
+        end
+        -- Limpiar entrada expirada
+        self.EnemyCastingTable[name] = nil
     end
     
     return false
 end
 
 -- Verificar si tiene debuff magico (dispeleable)
-function PetAI:HasMagicDebuff(unit)
-    if not UnitExists(unit) then return false end
+function PetAI:GetDebuffPriority(unit)
+    if not UnitExists(unit) then return 0 end
     
-    -- Debuffs peligrosos que queremos quitar
-    local dangerousDebuffs = {
-        "polymorph", "sheep", "fear", "horror", "charm",
-        "slow", "frost", "frozen", "root", "nova",
-        "curse", "hex", "silence", "pacify"
-    }
-    
+    local ccDebuffs = {"polymorph", "sheep", "fear", "horror", "charm", "sleep", "banish"}
+    local ctlDebuffs = {"silence", "pacify", "root", "nova", "stun", "hammer"}
+    local softDebuffs = {"slow", "frost", "curse", "hex", "immolate", "corruption"}
+
     for i = 1, 16 do
         local texture = UnitDebuff(unit, i)
         if not texture then break end
         local texLower = string.lower(texture)
-        
-        for j = 1, WCS_TableCount(dangerousDebuffs) do
-            if string.find(texLower, dangerousDebuffs[j], 1, true) then
-                return true
-            end
-        end
+        for _, p in pairs(ccDebuffs) do if string.find(texLower, p, 1, true) then return 3 end end
+        for _, p in pairs(ctlDebuffs) do if string.find(texLower, p, 1, true) then return 2 end end
+        for _, p in pairs(softDebuffs) do if string.find(texLower, p, 1, true) then return 1 end end
     end
-    
-    return false
+    return 0
+end
+
+function PetAI:HasMagicDebuff(unit)
+    return self:GetDebuffPriority(unit) > 0
 end
 
 -- Buscar miembro del grupo con debuff magico
@@ -1684,8 +1667,25 @@ local function PetAI_OnEvent()
         PetAI:Print("v" .. PetAI.VERSION .. " cargado. Auto-Reenslave: ON")
     elseif event == "UNIT_PET" and arg1 == "player" then
         PetAI:OnPetChanged()
+    -- RASTREO DE CASTEO PARA 1.12
+    elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" or 
+           event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE" then
+        -- Formato: "Enemy begins to cast Spell."
+        local _, _, enemy, spell = string.find(arg1, "(.+) comienza a lanzar (.+)%.")
+        if not enemy then
+            _, _, enemy, spell = string.find(arg1, "(.+) begins to cast (.+)%.")
+        end
+        
+        if enemy and spell then
+            PetAI.EnemyCastingTable[enemy] = {
+                spell = spell,
+                endTime = GetTime() + 2.5 -- Asumimos 2.5s si no hay más info
+            }
+        end
     end
 end
+PetAI.frame:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
+PetAI.frame:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE")
 PetAI.frame:SetScript("OnEvent", PetAI_OnEvent)
 
 PetAI.frame:SetScript("OnUpdate", function()

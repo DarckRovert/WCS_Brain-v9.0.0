@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: |cff9482C9WCS BRAIN|r |cffffffffv8.0.0|r [God-Tier]
+## Title: |cff9482C9WCS BRAIN|r |cffffffffv8.2.0|r [God-Tier]
 ## Notes: Master Orchestrator for El Séquito del Terror. Complete Tactical Suite.
 ## Author: DarckRovert / Antigravity
 ## SavedVariables: WCS_BrainSaved, WCS_BrainDQNButtonConfig, WCS_BrainThinkingButtonConfig, WCS_BrainButtonBarConfig, WCS_BrainMetricsSaved, WCS_BrainContextualSaved, WCS_BrainTutorialButtonSaved, WCS_ClanUI_SavedVars, WCS_BankData, WCS_PvPTrackerData, WCS_RaidManagerData, WCS_StatisticsData, WCS_BrainLearningSaved, WCS_BrainButtonBarConfig, WCS_BrainDQNButtonConfig, WCS_BrainThinkingButtonConfig, WCS_BrainTutorialButtonSaved
