@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainPetChat.lua - Sistema de Chat de Mascotas v8.0.0
+    WCS_BrainPetChat.lua - Sistema de Chat de Mascotas v6.5.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Las mascotas "hablan" según su personalidad
@@ -8,7 +8,7 @@
 ]]--
 
 WCS_BrainPetChat = WCS_BrainPetChat or {}
-WCS_BrainPetChat.VERSION = "8.0.0"
+WCS_BrainPetChat.VERSION = "6.5.0"
 WCS_BrainPetChat.enabled = true
 WCS_BrainPetChat.currentPet = nil
 

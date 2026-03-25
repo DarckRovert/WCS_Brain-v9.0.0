@@ -16,8 +16,9 @@ local SAVE_INTERVAL = 5
 
 -- Colores
 local COLOR_PURPLE = {r=0.58, g=0.51, b=0.79}
-local COLOR_GREEN = {r=0, g=1, b=0.5}
-local COLOR_RED = {r=1, g=0, b=0}
+local COLOR_FEL = {r=0.0, g=1.0, b=0.5}
+local COLOR_GOLD = {r=1.0, g=0.82, b=0.0}
+local COLOR_RED = {r=1, g=0.2, b=0.2}
 
 -- Configuracion por defecto
 local defaultConfig = {
@@ -78,8 +79,9 @@ function WCS_BrainThinkingButton:CreateButton()
     -- Texto de estado
     local statusText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     statusText:SetPoint("BOTTOM", button, "BOTTOM", 0, -15)
-    statusText:SetText("Think")
-    statusText:SetTextColor(COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
+    statusText:SetText("THINKING")
+    statusText:SetTextColor(COLOR_GOLD.r, COLOR_GOLD.g, COLOR_GOLD.b)
+    statusText:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
     button.statusText = statusText
     
     -- Restaurar posicion guardada
@@ -149,8 +151,8 @@ function WCS_BrainThinkingButton:CreateButton()
         if WCS_BrainThinkingUI and WCS_BrainThinkingUI.isShowing then
             local alpha = 0.5 + 0.5 * math.sin(pulseTimer * PULSE_SPEED)
             button.border:SetAlpha(alpha)
-            button.border:SetVertexColor(COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b, alpha)
-            button.statusText:SetTextColor(COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b)
+            button.border:SetVertexColor(COLOR_FEL.r, COLOR_FEL.g, COLOR_FEL.b, alpha)
+            button.statusText:SetTextColor(COLOR_FEL.r, COLOR_FEL.g, COLOR_FEL.b)
         else
             button.border:SetAlpha(0.3)
             button.border:SetVertexColor(COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b, 0.3)
@@ -191,27 +193,23 @@ function WCS_BrainThinkingButton:ShowTooltip()
     
     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine("WCS Brain - Thinking UI", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
+    GameTooltip:AddLine("WCS Brain - Thinking UI", COLOR_GOLD.r, COLOR_GOLD.g, COLOR_GOLD.b)
+    GameTooltip:AddLine("|cFFAAAAAAConsola de Razonamiento v9.0|r", 1, 1, 1)
     GameTooltip:AddLine(" ")
     
     if WCS_BrainThinkingUI then
-        if WCS_BrainThinkingUI.isShowing then
-            GameTooltip:AddLine("Estado: VISIBLE", COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b)
-        else
-            GameTooltip:AddLine("Estado: OCULTO", COLOR_RED.r, COLOR_RED.g, COLOR_RED.b)
-        end
-        
+        GameTooltip:AddLine("ESTADO: |cFF00FF00CONECTADO|r", 1, 1, 1)
         GameTooltip:AddLine(" ")
-        GameTooltip:AddLine("Muestra el pensamiento del Brain", 1, 1, 1)
-        GameTooltip:AddLine("en tiempo real durante combate", 1, 1, 1)
+        GameTooltip:AddLine("Visualiza en tiempo real los", 0.8, 0.8, 0.8)
+        GameTooltip:AddLine("procesos cognitivos de la IA.", 0.8, 0.8, 0.8)
     else
         GameTooltip:AddLine("Sistema no disponible", COLOR_RED.r, COLOR_RED.g, COLOR_RED.b)
     end
     
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine("Click Izquierdo: Abrir/Cerrar", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Click Derecho: Menu de opciones", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Arrastrar: Mover boton", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("|cFFFFD700Click Izquierdo:|r Abrir Consola", 1, 1, 1)
+    GameTooltip:AddLine("|cFFFFD700Click Derecho:|r Menu de Sistema", 1, 1, 1)
+    GameTooltip:AddLine("|cFF888888Arrastrar para mover|r", 1, 1, 1)
     
     GameTooltip:Show()
 end

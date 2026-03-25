@@ -36,15 +36,14 @@ function WCS_BrainProfilesUI:Create()
     
     -- Backdrop
     mainFrame:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
         tile = true,
-        tileSize = 16,
-        edgeSize = 16,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        tileSize = 32,
+        edgeSize = 32,
+        insets = {left = 11, right = 12, top = 12, bottom = 11}
     })
-    mainFrame:SetBackdropColor(0.04, 0.02, 0.08, 0.95)
-    mainFrame:SetBackdropBorderColor(0.58, 0.51, 0.79, 1)
+    mainFrame:SetBackdropColor(0, 0, 0, 0.95)
     
     -- Titulo
     local title = mainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -653,15 +652,14 @@ function WCS_BrainProfilesUI:ShowCreateDialog()
     dialog:SetFrameStrata("FULLSCREEN_DIALOG")
     
     dialog:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
         tile = true,
-        tileSize = 16,
-        edgeSize = 16,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        tileSize = 32,
+        edgeSize = 32,
+        insets = {left = 11, right = 12, top = 12, bottom = 11}
     })
-    dialog:SetBackdropColor(0.04, 0.02, 0.08, 0.95)
-    dialog:SetBackdropBorderColor(0.58, 0.51, 0.79, 1)
+    dialog:SetBackdropColor(0, 0, 0, 0.95)
     
     -- Titulo
     local title = dialog:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -757,15 +755,14 @@ function WCS_BrainProfilesUI:ShowSaveDialog(profileName)
     dialog:SetFrameStrata("FULLSCREEN_DIALOG")
     
     dialog:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
         tile = true,
-        tileSize = 16,
-        edgeSize = 16,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        tileSize = 32,
+        edgeSize = 32,
+        insets = {left = 11, right = 12, top = 12, bottom = 11}
     })
-    dialog:SetBackdropColor(0.04, 0.02, 0.08, 0.95)
-    dialog:SetBackdropBorderColor(0.58, 0.51, 0.79, 1)
+    dialog:SetBackdropColor(0, 0, 0, 0.95)
     
     -- Titulo
     local title = dialog:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
@@ -874,11 +871,17 @@ end
 -- MOSTRAR/OCULTAR/TOGGLE
 -- ============================================================================
 function WCS_BrainProfilesUI:Show()
-    if not mainFrame then
-        WCS_BrainProfilesUI:Create()
+    if WCS_BrainUI and WCS_BrainUI.SelectTabByName then
+        WCS_BrainUI:SelectTabByName("Perfiles")
+        if not mainFrame then WCS_BrainProfilesUI:Create() end
+        WCS_BrainProfilesUI:RefreshProfileList()
+    else
+        if not mainFrame then
+            WCS_BrainProfilesUI:Create()
+        end
+        mainFrame:Show()
+        WCS_BrainProfilesUI:RefreshProfileList()
     end
-    mainFrame:Show()
-    WCS_BrainProfilesUI:RefreshProfileList()
 end
 
 function WCS_BrainProfilesUI:Hide()
@@ -888,7 +891,14 @@ function WCS_BrainProfilesUI:Hide()
 end
 
 function WCS_BrainProfilesUI:Toggle()
-    if mainFrame and mainFrame:IsVisible() then
+    if WCS_BrainUI and WCS_BrainUI.MainFrame and WCS_BrainUI.MainFrame:IsVisible() and WCS_BrainUI.tabDataList and WCS_BrainUI.MainFrame.currentTab then
+        if WCS_BrainUI.tabDataList[WCS_BrainUI.MainFrame.currentTab].name == "Perfiles" then
+            WCS_BrainUI:Toggle()
+            return
+        end
+    end
+    
+    if mainFrame and mainFrame:IsVisible() and (not WCS_BrainUI or not WCS_BrainUI.MainFrame or not WCS_BrainUI.MainFrame:IsVisible()) then
         WCS_BrainProfilesUI:Hide()
     else
         WCS_BrainProfilesUI:Show()

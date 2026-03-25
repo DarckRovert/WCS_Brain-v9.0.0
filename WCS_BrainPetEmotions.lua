@@ -1,5 +1,5 @@
 -- ============================================================================
--- WCS_BrainPetEmotions.lua v8.0.0
+-- WCS_BrainPetEmotions.lua v6.4.2
 -- Sistema de Emociones y Canales de Chat Extendidos
 -- Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
 -- ============================================================================
@@ -483,5 +483,5 @@ end
 -- ============================================================================
 -- INICIALIZACION
 -- ============================================================================
-DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS]|r PetEmotions v8.0.0 cargado - /petemote para comandos")
+DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS]|r PetEmotions v6.3.4 cargado - /petemote para comandos")
 

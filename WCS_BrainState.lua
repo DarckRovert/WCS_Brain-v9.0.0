@@ -7,7 +7,7 @@
 ]]--
 
 WCS_BrainState = WCS_BrainState or {}
-WCS_BrainState.VERSION = "8.0.0"
+WCS_BrainState.VERSION = "6.6.0"
 
 -- ============================================================================
 -- FUNCIONES AUXILIARES (Lua 5.0 compatible)

@@ -1,11 +1,11 @@
 --[[
     WCS_StringOptimizer.lua - Optimizaciones de String Operations
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Optimización de Rendimiento
+    Version: 6.4.2 - Optimización de Rendimiento
 ]]--
 
 WCS_StringOptimizer = WCS_StringOptimizer or {}
-WCS_StringOptimizer.VERSION = "8.0.0"
+WCS_StringOptimizer.VERSION = "6.4.2"
 
 -- ============================================================================
 -- CACHÉ DE PATRONES COMPILADOS

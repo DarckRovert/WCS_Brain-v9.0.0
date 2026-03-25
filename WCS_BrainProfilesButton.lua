@@ -4,7 +4,7 @@
 ]]--
 
 WCS_BrainProfilesButton = WCS_BrainProfilesButton or {}
-WCS_BrainProfilesButton.VERSION = "8.0.0"
+WCS_BrainProfilesButton.VERSION = "6.4.2"
 
 -- Variables locales
 local button = nil

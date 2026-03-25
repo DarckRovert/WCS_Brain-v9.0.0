@@ -63,27 +63,27 @@ function WCS_BrainDiagnostics:AddDebugLog(category, message, level)
     end
 end
 
-WCS_BrainDiagnostics.VERSION = "8.0.0"
+WCS_BrainDiagnostics.VERSION = "6.4.2"
 
 -- ============================================================================
 -- COLORES
 -- ============================================================================
 local COLORS = {
-    BG_DARK = {0.04, 0.02, 0.08},
-    BG_SECTION = {0.08, 0.05, 0.14},
-    BORDER = {0.58, 0.51, 0.79},
+    BG_DARK = {0.05, 0.05, 0.08},
+    BG_SECTION = {0.1, 0.08, 0.12},
+    BORDER = {0.5, 0.4, 0.7},
     WARLOCK_PURPLE = {0.58, 0.51, 0.79},
     FEL_GREEN = {0.0, 1.0, 0.5},
     
-    OK = {0.0, 1.0, 0.5},
-    WARNING = {1.0, 0.82, 0.0},
+    OK = {0.0, 1.0, 0.3},
+    WARNING = {1.0, 0.7, 0.0},
     ERROR = {1.0, 0.2, 0.2},
-    INFO = {0.0, 0.85, 1.0},
-    DISABLED = {0.55, 0.55, 0.55},
+    INFO = {0.4, 0.7, 1.0},
+    DISABLED = {0.5, 0.5, 0.5},
     
     GOLD = {1.0, 0.82, 0.0},
     WHITE = {1.0, 1.0, 1.0},
-    GRAY = {0.55, 0.55, 0.55}
+    GRAY = {0.6, 0.6, 0.6}
 }
 
 -- ============================================================================
@@ -103,11 +103,11 @@ local SYSTEMS = {
     {name = "WCS_BrainReward", category = "IA", description = "Sistema de recompensas", critical = false},
     {name = "WCS_BrainActions", category = "IA", description = "Acciones disponibles", critical = true},
     
-    -- MODULOS v8.0
-    {name = "WCS_BrainTesting", category = "Modulos v8.0", description = "Testing automatizado", critical = false},
-    {name = "WCS_BrainMetrics", category = "Modulos v8.0", description = "Metricas de rendimiento", critical = false},
-    {name = "WCS_BrainContextual", category = "Modulos v8.0", description = "Configuracion contextual", critical = false},
-    {name = "WCS_BrainIntegrations", category = "Modulos v8.0", description = "Integracion con addons", critical = false},
+    -- MODULOS v6.4.1
+    {name = "WCS_BrainTesting", category = "Modulos v6.3", description = "Testing automatizado", critical = false},
+    {name = "WCS_BrainMetrics", category = "Modulos v6.3", description = "Metricas de rendimiento", critical = false},
+    {name = "WCS_BrainContextual", category = "Modulos v6.3", description = "Configuracion contextual", critical = false},
+    {name = "WCS_BrainIntegrations", category = "Modulos v6.3", description = "Integracion con addons", critical = false},
     
     -- INTEGRACION
     {name = "WCS_BrainIntegration", category = "Integracion", description = "Integracion general", critical = false},
@@ -485,7 +485,7 @@ function WCS_BrainDiagnostics:Update()
     -- Mostrar resumen por categoria
     if self.systemsContent then
         local idx = 1
-        local catOrder = {"Nucleo", "IA", "Modulos v8.0", "Integracion", "Mascotas", "UI", "Optimizacion"}
+        local catOrder = {"Nucleo", "IA", "Modulos v6.3", "Integracion", "Mascotas", "UI", "Optimizacion"}
         for _, catName in ipairs(catOrder) do
             local cat = categories[catName]
             if cat and self.systemsContent[idx] then

@@ -1,5 +1,5 @@
 -- WCS_BrainWeakAuras.lua
--- Integración con WeakAuras para WCS_Brain v8.0.0
+-- Integración con WeakAuras para WCS_Brain v6.9.0
 -- Exporta datos del addon para uso en WeakAuras custom triggers
 
 if not WCS_Brain then return end
@@ -100,7 +100,7 @@ function WeakAuras:Initialize()
     _G["WCS_WeakAurasData"] = self.exports
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Info("Integración WeakAuras inicializada")
+        WCS_Brain.Notifications:Info("Integración WeakAuras inicializada")
     end
 end
 
@@ -109,7 +109,7 @@ function WeakAuras:OnWeakAurasLoaded()
     self.isWeakAurasLoaded = true
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Success("WeakAuras detectado - Integración activa")
+        WCS_Brain.Notifications:Success("WeakAuras detectado - Integración activa")
     else
         DEFAULT_CHAT_FRAME:AddMessage("WCS Brain: WeakAuras detectado", 0, 1, 0)
     end
@@ -388,7 +388,7 @@ function WeakAuras:ExportWeakAurasConfig()
         ["WCS Brain - Alertas"] = {
             trigger = {
                 type = "custom",
-                custom = "function()\n  local data = WCS_WeakAurasData\n  if not data then return false end\n  return table.getn(data.alerts) > 0\nend",
+                custom = "function()\n  local data = WCS_WeakAurasData\n  if not data then return false end\n  return #data.alerts > 0\nend",
                 custom_type = "event",
             },
         },
@@ -473,5 +473,5 @@ end
 WeakAuras:Initialize()
 
 if WCS_Brain.Notifications then
-    WCS_BrainNotifications:Info("Integración WeakAuras lista. Usa /wcswa")
+    WCS_Brain.Notifications:Info("Integración WeakAuras lista. Usa /wcswa")
 end

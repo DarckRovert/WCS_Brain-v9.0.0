@@ -19,20 +19,6 @@ local pvpData = {
 function WCS_PvPTracker:Initialize()
     if panel then return end
     
-    -- Inicializar SavedVariable
-    if not WCS_PvPTrackerData then
-        WCS_PvPTrackerData = {
-            kills = 0,
-            deaths = 0,
-            honorableKills = 0,
-            duelWins = 0,
-            duelLosses = 0,
-            enemies = {},
-            recentKills = {}
-        }
-    end
-    pvpData = WCS_PvPTrackerData
-    
     panel = CreateFrame("Frame", "WCS_PvPTrackerFrame", WCS_ClanUI.MainFrame.content)
     panel:SetAllPoints(WCS_ClanUI.MainFrame.content)
     panel:Hide()

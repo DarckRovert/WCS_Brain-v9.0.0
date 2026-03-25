@@ -3,7 +3,7 @@ function WCS_Brain_Pet_GetResponse(situation)
     return WCS_Brain.Pet.Social:GetResponse(situation)
 end
 -- ============================================================================
--- WCS_BrainPetSocial.lua v8.0.0
+-- WCS_BrainPetSocial.lua v6.4.2
 -- Sistema de Chat Social para Mascota - WCS_Brain
 -- Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
 -- ============================================================================
@@ -1055,5 +1055,5 @@ WCS_PetSocialSaveFrame:SetScript("OnUpdate", function()
     end
 end)
 
-DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS Brain]|r PetSocial v8.0.0 cargado - Burbuja mejorada! /wcssocial bubble help")
+DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS Brain]|r PetSocial v6.3.4 cargado - Burbuja mejorada! /wcssocial bubble help")
 

@@ -5,7 +5,7 @@
 -- (Moved below PetAI initialization)
 
 --[[
-    WCS_BrainPetAI.lua v8.0.0
+    WCS_BrainPetAI.lua v6.7.1
     Sistema de IA Inteligente para Mascotas de Warlock
 
     Caracteristicas:
@@ -18,7 +18,7 @@
 
 WCS_BrainPetAI = WCS_BrainPetAI or {}
 local PetAI = WCS_BrainPetAI
--- Permite registrar lógica personalizada para futuras mascotas o demonios especiales
+-- Permite registrar lÃƒÂ³gica personalizada para futuras mascotas o demonios especiales
 PetAI.CustomPetLogic = {}
 
 -- Registrar una nueva mascota personalizada
@@ -30,7 +30,7 @@ end
 -- Ejemplo de plantilla para una nueva mascota (puedes copiar y adaptar)
 --[[
 PetAI:RegisterCustomPet("Fel Imp", function(self)
-    -- Lógica específica para Fel Imp
+    -- LÃƒÂ³gica especÃƒÂ­fica para Fel Imp
     -- Ejemplo: priorizar Firebolt y Dispel
     local abilities = self:ScanPetAbilities()
     for i, ab in ipairs(abilities) do
@@ -49,7 +49,7 @@ end)
 
 -- ============================================================================
 -- SISTEMA DE EVENTOS INTERNO PARA MASCOTAS (modular, extensible)
--- Permite registrar y disparar callbacks para eventos clave (daño, muerte, cambio de estado, etc)
+-- Permite registrar y disparar callbacks para eventos clave (daÃƒÂ±o, muerte, cambio de estado, etc)
 -- Uso: PetAI:RegisterEvent(event, callback), PetAI:TriggerEvent(event, ...)
 -- ============================================================================
 PetAI._eventCallbacks = {}
@@ -75,10 +75,10 @@ function PetAI:TriggerEvent(event, ...)
     end
 end
 
--- Ejemplo de integración: disparar eventos en situaciones clave
--- (Puedes expandir esto en los métodos de combate, muerte, cambio de estado, etc)
+-- Ejemplo de integraciÃƒÂ³n: disparar eventos en situaciones clave
+-- (Puedes expandir esto en los mÃƒÂ©todos de combate, muerte, cambio de estado, etc)
 
-PetAI.VERSION = "8.0.0"  -- Mascotas inteligentes mejoradas + Sistema de ejecución corregido
+PetAI.VERSION = "6.7.1"  -- Mascotas inteligentes mejoradas + Sistema de ejecuciÃƒÂ³n corregido
 PetAI.ENABLED = true
 PetAI.debug = false
 PetAI.lastUpdate = 0
@@ -109,24 +109,21 @@ PetAI.Config = {
 }
 
 -- ============================================================================
-PetAI.currentMode = 1  -- 1=Agresivo, 2=Defensivo, 3=Soporte, 4=Guardián
+PetAI.currentMode = 1  -- 1=Agresivo, 2=Defensivo, 3=Soporte, 4=GuardiÃƒÂ¡n
 
--- Variables para modo Guardián
+-- Variables para modo GuardiÃƒÂ¡n
 PetAI.GuardianTarget = nil  -- Nombre del jugador a proteger
 PetAI.GuardianLastCheck = 0
 PetAI.GuardianCheckInterval = 0.5  -- Revisar cada 0.5 segundos
 
--- Tabla para rastrear casteos enemigos en 1.12 (Combat Log fallback)
-PetAI.EnemyCastingTable = {}
-
--- Configuración de comportamiento por modo
+-- ConfiguraciÃƒÂ³n de comportamiento por modo
 PetAI.ModeConfig = {
     [1] = {  -- Agresivo
         name = "Agresivo",
         attackPriority = "high",      -- Prioridad de ataque
         defensePriority = "low",      -- Prioridad de defensa
         supportPriority = "low",      -- Prioridad de soporte
-        autoAttack = true,            -- Atacar automáticamente
+        autoAttack = true,            -- Atacar automÃƒÂ¡ticamente
         useOffensive = true,          -- Usar habilidades ofensivas
         useDefensive = false,         -- Usar habilidades defensivas
         useSupport = false,           -- Usar habilidades de soporte
@@ -154,7 +151,7 @@ PetAI.ModeConfig = {
         useSupport = true,
         aggressiveMode = false
     },
-    [4] = {  -- Guardián
+    [4] = {  -- GuardiÃƒÂ¡n
         name = "Guardian",
         attackPriority = "high",
         defensePriority = "high",
@@ -167,7 +164,7 @@ PetAI.ModeConfig = {
     }
 }
 
--- Función para cambiar el modo de IA
+-- FunciÃƒÂ³n para cambiar el modo de IA
 function PetAI:SetMode(mode)
     -- Convertir a numero si es string
     if type(mode) == "string" then
@@ -175,36 +172,36 @@ function PetAI:SetMode(mode)
     end
     
     if not mode or mode < 1 or mode > 4 then
-        self:Print("Modo inválido. Usa 1 (Agresivo), 2 (Defensivo), 3 (Soporte) o 4 (Guardián)")
+        self:Print("Modo invÃƒÂ¡lido. Usa 1 (Agresivo), 2 (Defensivo), 3 (Soporte) o 4 (GuardiÃƒÂ¡n)")
         return false
     end
-    -- Si cambia a modo Guardián sin target asignado, avisar
+    -- Si cambia a modo GuardiÃƒÂ¡n sin target asignado, avisar
     if mode == 4 and not self.GuardianTarget then
-        self:Print("Modo Guardián activado. Usa /petguard [nombre] para asignar a quién proteger")
+        self:Print("Modo GuardiÃƒÂ¡n activado. Usa /petguard [nombre] para asignar a quiÃƒÂ©n proteger")
     end
     
     self.currentMode = mode
     local config = self.ModeConfig[mode]
     
     if not config then
-        self:Print("ERROR: Configuración de modo no encontrada")
+        self:Print("ERROR: ConfiguraciÃƒÂ³n de modo no encontrada")
         return false
     end
     
-    -- Actualizar configuración legacy
+    -- Actualizar configuraciÃƒÂ³n legacy
     self.Config.aggressiveMode = config.aggressiveMode
     
-    -- Mensaje de confirmación
+    -- Mensaje de confirmaciÃƒÂ³n
     local modeNames = {
         [1] = "|cFFFF0000Agresivo|r",
         [2] = "|cFF00FF00Defensivo|r",
         [3] = "|cFF00CCFFSoporte|r",
-        [4] = "|cFFFFD700Guardián|r"
+        [4] = "|cFFFFD700GuardiÃƒÂ¡n|r"
     }
     
     self:Print("Modo de IA cambiado a: " .. modeNames[mode])
     
-    -- Disparar evento para otros módulos
+    -- Disparar evento para otros mÃƒÂ³dulos
     if self.TriggerEvent then
         self:TriggerEvent("MODE_CHANGED", mode, config.name)
     end
@@ -212,30 +209,30 @@ function PetAI:SetMode(mode)
     return true
 end
 
--- Función para obtener el modo actual
+-- FunciÃƒÂ³n para obtener el modo actual
 function PetAI:GetMode()
     return self.currentMode or 1
 end
 
--- Función para obtener el nombre del modo actual
+-- FunciÃƒÂ³n para obtener el nombre del modo actual
 function PetAI:GetModeName()
     local config = self.ModeConfig[self.currentMode]
     return config and config.name or "Desconocido"
 end
 
--- Función helper para verificar si debe usar habilidades ofensivas
+-- FunciÃƒÂ³n helper para verificar si debe usar habilidades ofensivas
 function PetAI:ShouldUseOffensive()
     local config = self.ModeConfig[self.currentMode]
     return config and config.useOffensive or false
 end
 
--- Función helper para verificar si debe usar habilidades defensivas
+-- FunciÃƒÂ³n helper para verificar si debe usar habilidades defensivas
 function PetAI:ShouldUseDefensive()
     local config = self.ModeConfig[self.currentMode]
     return config and config.useDefensive or false
 end
 
--- Función helper para verificar si debe usar habilidades de soporte
+-- FunciÃƒÂ³n helper para verificar si debe usar habilidades de soporte
 function PetAI:ShouldUseSupport()
     local config = self.ModeConfig[self.currentMode]
     return config and config.useSupport or false
@@ -323,66 +320,39 @@ end
 function PetAI:GetPetType()
     if not UnitExists("pet") then return nil end
     
-    -- Metodo 1: Usar UnitCreatureFamily (mas confiable)
+    -- Metodo 1: UnitCreatureFamily (El mas confiable para WoW Vanilla/Turtle)
     local family = UnitCreatureFamily("pet")
     if family then
-        family = string.lower(family)
-        if family == "imp" or string.find(family, "imp") then return "Imp" end
-        if family == "voidwalker" or string.find(family, "void") then return "Voidwalker" end
-        if family == "succubus" or string.find(family, "succub") then return "Succubus" end
-        if family == "felhunter" or string.find(family, "felhunter") then return "Felhunter" end
-        if family == "felguard" or string.find(family, "felguard") then return "Felguard" end
-        if family == "infernal" or string.find(family, "infernal") then return "Infernal" end
-        if family == "doomguard" or string.find(family, "doomguard") then return "Doomguard" end
+        local famLower = string.lower(family)
+        if string.find(famLower, "imp") or string.find(famLower, "diablillo") then return "Imp" end
+        if string.find(famLower, "void") or string.find(famLower, "abisario") then return "Voidwalker" end
+        if string.find(famLower, "succub") or string.find(famLower, "súcubo") or string.find(famLower, "sucubo") then return "Succubus" end
+        if string.find(famLower, "felhunter") or string.find(famLower, "sabueso") then return "Felhunter" end
+        if string.find(famLower, "felguard") or string.find(famLower, "guardia vil") then return "Felguard" end
+        if string.find(famLower, "infernal") then return "Infernal" end
+        if string.find(famLower, "doomguard") or string.find(famLower, "apocalíptic") or string.find(famLower, "apocaliptic") then return "Doomguard" end
     end
     
-    -- Metodo 2: Detectar por habilidades del pet
+    -- Metodo 2: Analisis de libro de hechizos (Fallback hiper robusto y bilingüe)
     for i = 1, 10 do
         local name = GetPetActionInfo(i)
         if name then
             local nameLower = string.lower(name)
-            -- Imp: Fire Shield, Firebolt
-            if string.find(nameLower, "fire shield") or string.find(nameLower, "firebolt") then
-                return "Imp"
-            end
-            -- Voidwalker: Torment, Sacrifice, Suffering, Consume Shadows
-            if string.find(nameLower, "torment") or string.find(nameLower, "sacrifice") or string.find(nameLower, "suffering") then
-                return "Voidwalker"
-            end
-            -- Succubus: Seduction, Lash of Pain, Soothing Kiss
-            if string.find(nameLower, "seduction") or string.find(nameLower, "lash of pain") or string.find(nameLower, "soothing") then
-                return "Succubus"
-            end
-            -- Felhunter: Devour Magic, Spell Lock, Tainted Blood
-            if string.find(nameLower, "devour") or string.find(nameLower, "spell lock") or string.find(nameLower, "tainted") then
-                return "Felhunter"
-            end
-            -- Felguard: Cleave, Intercept, Anguish
-            if string.find(nameLower, "intercept") or string.find(nameLower, "anguish") then
-                return "Felguard"
-            end
-            -- Infernal: Immolation
-            if string.find(nameLower, "immolation") then
-                return "Infernal"
-            end
-            -- Doomguard: War Stomp, Cripple, Rain of Fire
-            if string.find(nameLower, "war stomp") or string.find(nameLower, "cripple") then
-                return "Doomguard"
-            end
+            if string.find(nameLower, "fire") or string.find(nameLower, "fuego") or string.find(nameLower, "pacto") then return "Imp" end
+            if string.find(nameLower, "torment") or string.find(nameLower, "sacrifi") or string.find(nameLower, "suffer") or string.find(nameLower, "sufrimi") then return "Voidwalker" end
+            if string.find(nameLower, "seduc") or string.find(nameLower, "lash") or string.find(nameLower, "latigazo") or string.find(nameLower, "soothing") or string.find(nameLower, "beso") then return "Succubus" end
+            if string.find(nameLower, "devour") or string.find(nameLower, "devorar") or string.find(nameLower, "spell lock") or string.find(nameLower, "bloqueo") or string.find(nameLower, "taint") or string.find(nameLower, "corrupta") then return "Felhunter" end
+            if string.find(nameLower, "intercept") or string.find(nameLower, "anguish") or string.find(nameLower, "angustia") or string.find(nameLower, "brutal") then return "Felguard" end
         end
     end
     
-    -- Metodo 3: Fallback por nombre (algunos servers usan nombres genericos)
+    -- Metodo 3: Fallback estricto por nombre (ej. test env)
     local petName = UnitName("pet")
     if petName then
-        petName = string.lower(petName)
-        if string.find(petName, "imp") then return "Imp" end
-        if string.find(petName, "void") then return "Voidwalker" end
-        if string.find(petName, "succub") then return "Succubus" end
-        if string.find(petName, "felhunter") then return "Felhunter" end
-        if string.find(petName, "felguard") then return "Felguard" end
-        if string.find(petName, "infernal") then return "Infernal" end
-        if string.find(petName, "doomguard") then return "Doomguard" end
+        local pName = string.lower(petName)
+        if string.find(pName, "imp") then return "Imp" end
+        if string.find(pName, "void") then return "Voidwalker" end
+        if string.find(pName, "succ") then return "Succubus" end
     end
     
     return "Unknown"
@@ -454,16 +424,94 @@ function PetAI:SetCooldown(spellName, duration)
     self.cooldowns[spellName] = { start = GetTime(), duration = duration }
 end
 -- ============================================================================
--- NUEVAS FUNCIONES v8.0.0 - Sistema mejorado de ejecución
+-- NUEVAS FUNCIONES v6.7.1 - Sistema mejorado de ejecuciÃƒÂ³n
 -- ============================================================================
 
--- Obtener slot de habilidad por nombre
+-- Tabla de traduccion EN <-> ES para habilidades de mascota
+-- Permite que la IA funcione con cliente en Ingles Y Espanol
+PetAI.SpellAliases = {
+    ["fire shield"]         = "escudo de fuego",
+    ["firebolt"]            = "bola de fuego",
+    ["phase shift"]         = "cambio de fase",
+    ["sacrifice"]           = "sacrificio",
+    ["torment"]             = "tormento",
+    ["suffering"]           = "sufrimiento",
+    ["consume shadows"]     = "consumir sombras",
+    ["seduction"]           = "seduccion",
+    ["lash of pain"]        = "latigazo de dolor",
+    ["soothing kiss"]       = "beso calmante",
+    ["lesser invisibility"] = "invisibilidad menor",
+    ["spell lock"]          = "bloqueo de hechizo",
+    ["devour magic"]        = "devorar magia",
+    ["tainted blood"]       = "sangre corrupta",
+    ["intercept"]           = "interceptar",
+    ["anguish"]             = "angustia",
+    ["cleave"]              = "golpe brutal",
+    ["war stomp"]           = "pisoton de guerra",
+    ["cripple"]             = "lisiar",
+    ["rain of fire"]        = "lluvia de fuego",
+    ["immolation"]          = "inmolacion",
+}
+
+PetAI.AbilityTextures = {
+    ["fire shield"]         = "Spell_Fire_FireArmor",
+    ["firebolt"]            = "Spell_Fire_FireBolt",
+    ["phase shift"]         = "Spell_Shadow_AuraOfDarkness",
+    ["sacrifice"]           = "Spell_Shadow_SacrificialShield",
+    ["torment"]             = "Spell_Shadow_GatherShadows",
+    ["suffering"]           = "Spell_Shadow_BlackPlague",
+    ["consume shadows"]     = "Spell_Shadow_AntiShadow",
+    ["seduction"]           = "Spell_Shadow_MindSteal",
+    ["lash of pain"]        = "Spell_Shadow_Curse",
+    ["soothing kiss"]       = "Spell_Shadow_SoothingKiss",
+    ["lesser invisibility"] = "Spell_Magic_LesserInvisibilty",
+    ["spell lock"]          = "Spell_Shadow_MindRot",
+    ["devour magic"]        = "Spell_Nature_Purge",
+    ["tainted blood"]       = "Spell_Shadow_LifeDrain",
+    ["intercept"]           = "Ability_Rogue_Sprint",
+    ["anguish"]             = "Spell_Shadow_GatherShadows",
+    ["cleave"]              = "Ability_Warrior_Cleave",
+    ["war stomp"]           = "Ability_WarStomp",
+    ["cripple"]             = "Spell_Shadow_Cripple",
+    ["rain of fire"]        = "Spell_Shadow_RainOfFire",
+    ["immolation"]          = "Spell_Shadow_Immolation"
+}
+
+-- Obtener slot de habilidad por nombre (bilingue EN/ES + Soporte Texturas Custom Servers)
 function PetAI:GetPetAbilitySlot(spellName)
     if not UnitExists("pet") or not spellName then return nil end
+    local s = string.lower(spellName)
+    
+    -- 1. Preparar alias de idioma
+    local alias = self.SpellAliases[s] or ""
+    if alias == "" then
+        for en, es in pairs(self.SpellAliases) do
+            if es == s then alias = en break end
+        end
+    end
+    
+    -- 2. Preparar textura (fallback maestro)
+    local targetTexture = self.AbilityTextures[s]
+    if not targetTexture and alias ~= "" then
+        targetTexture = self.AbilityTextures[alias]
+    end
+    if targetTexture then targetTexture = string.lower(targetTexture) end
+    
+    -- 3. Escaneo del libro de macotas
     for i = 1, 10 do
-        local name = GetPetActionInfo(i)
-        if name and string.lower(name) == string.lower(spellName) then
-            return i
+        local name, _, texture = GetPetActionInfo(i)
+        if name then
+            local n = string.lower(name)
+            
+            -- Match parcial de nombre (soporta sufijos como "(Rango 4)")
+            if string.find(n, s) or (alias ~= "" and string.find(n, alias)) then
+                return i
+            end
+            
+            -- Match por textura (inmune a cualquier idioma o alteración de server custom)
+            if targetTexture and texture and string.find(string.lower(texture), targetTexture) then
+                return i
+            end
         end
     end
     return nil
@@ -501,25 +549,29 @@ end
 function PetAI:ExecuteAbility(spellName)
     if not spellName then return false end
     if not self:CanCastPetAbility(spellName) then return false end
-    
     local success = false
-    local slot = self:GetPetAbilitySlot(spellName)
-    
-    -- PRIORIDAD 1: CastPetAction (Nativo y robusto para 1.12)
-    if slot then
-        CastPetAction(slot)
-        success = true
-        self:DebugPrint("[Execute] " .. spellName .. " - CastPetAction(" .. slot .. ")")
-    -- PRIORIDAD 2: CastSpellByName (Solo como fallback para hechizos del jugador como Enslave)
-    elseif CastSpellByName then
+    if CastSpellByName then
         CastSpellByName(spellName)
         success = true
         self:DebugPrint("[Execute] " .. spellName .. " - CastSpellByName")
+    else
+        local slot = self:GetPetAbilitySlot(spellName)
+        if slot then
+            CastPetAction(slot)
+            success = true
+            self:DebugPrint("[Execute] " .. spellName .. " - CastPetAction(" .. slot .. ")")
+        else
+            local cmd = "/cast " .. tostring(spellName)
+            if ChatFrameEditBox then
+                ChatFrameEditBox:SetText(cmd)
+                ChatEdit_SendText(ChatFrameEditBox)
+                success = true
+                self:DebugPrint("[Execute] " .. spellName .. " - ChatFrame (obsoleto)")
+            end
+        end
     end
-    
     if success then
-        -- Cooldown interno: Respetar 1s de GCD global de pets en 1.12
-        self:SetCooldown(spellName, 1.0)
+        self:SetCooldown(spellName, 1.5)
     end
     return success
 end
@@ -792,9 +844,10 @@ function PetAI:ExecutePetAbilityOnTarget(spellName, targetUnit, targetName)
         return false
     end
     
-    local cmd = "/cast " .. tostring(spellName)
-    ChatFrameEditBox:SetText(cmd)
-    ChatEdit_SendText(ChatFrameEditBox)
+    local slot = self:GetPetAbilitySlot(spellName)
+    if slot then
+        CastPetAction(slot)
+    end
     
     self:Print("|cff00ff00" .. tostring(spellName) .. "|r -> " .. tostring(targetName or targetUnit))
     self:SetCooldown(spellName, 4)
@@ -857,16 +910,22 @@ function PetAI:EvaluateVoidwalker()
         return self:ExecuteAbility("Sacrifice")
     end
     
-        -- PRIORIDAD 2: Peeling - Proteger al jugador de atacantes directos
-    if inCombat and not self:IsOnCooldown("Suffering") then
-        if UnitExists("targettarget") and UnitIsUnit("targettarget", "player") then
-             if self:ShouldUseDefensive() then
-                self:SetCooldown("Suffering", 120)
-                self:Print("|cffff6600¡PEELING!|r Quitando aggro de tu atacante")
-                return self:ExecuteAbility("Suffering")
-             end
+    -- PRIORIDAD 2: Sacrificio inteligente - Voidwalker a punto de morir
+    -- Mejor convertirse en escudo util que morir sin dar nada
+    if cfg.smartSacrifice then
+        local sacrificeThreshold = cfg.voidwalkerSacrificeHP or 15
+        
+        if petHP < sacrificeThreshold and inCombat then
+            -- Verificar que el sacrificio sea util (jugador no esta al 100%)
+            if playerHP < 90 then
+                self:Print("|cffff6600SACRIFICIO INTELIGENTE!|r Voidwalker HP: " .. string.format("%.0f", petHP) .. "% - Convirtiendome en escudo!")
+                return self:ExecuteAbility("Sacrifice")
+            else
+                self:DebugPrint("Voidwalker moribundo pero jugador al " .. string.format("%.0f", playerHP) .. "% - no sacrifico")
+            end
         end
     end
+    
     -- PRIORIDAD 3: Suffering para quitar aggro del jugador
     if playerHP < 50 and inCombat then
         if not self:IsOnCooldown("Suffering") then
@@ -1010,21 +1069,32 @@ function PetAI:EvaluateFelhunter()
         end
     end
     
-        -- PRIORIDAD 2: Devour Magic Inteligente (Jugador o Aliado Protegido)
-    local protectUnits = {"player"}
-    if self.GuardianTarget then table.insert(protectUnits, self.GuardianTarget) end
-    
-    for _, unit in pairs(protectUnits) do
-        local priority = self:GetDebuffPriority(unit)
-        if priority > 0 then
-            if not self:IsOnCooldown("Devour Magic") then
-                if self:ShouldUseSupport() then
-                    self:SetCooldown("Devour Magic", 8)
-                    local name = UnitName(unit) or "Aliado"
-                    if priority == 3 then self:Print("|cffff0000¡EMERGENCIA!|r Quitando CC de " .. name) end
-                    return self:ExecutePetAbilityOnTarget("Devour Magic", unit, name)
-                end
+    -- PRIORIDAD 2: Devour Magic en jugador (debuffs magicos)
+    if self:HasMagicDebuff("player") then
+        if not self:IsOnCooldown("Devour Magic") then
+            -- Verificar modo: Devour Magic (aliado) es habilidad de SOPORTE
+            if not self:ShouldUseSupport() then
+                self:DebugPrint("[Felhunter] Modo actual no permite Devour Magic en aliados")
+                return false
             end
+            self:SetCooldown("Devour Magic", 8)
+            self:Print("|cff9370DBDevour Magic!|r Quitando debuff del jugador")
+            return self:ExecuteAbility("Devour Magic")
+        end
+    end
+    
+    -- PRIORIDAD 3: Devour Magic en miembros del grupo
+    local debuffedMember = self:FindGroupMemberWithMagicDebuff()
+    if debuffedMember then
+        if not self:IsOnCooldown("Devour Magic") then
+            -- Verificar modo: Devour Magic (grupo) es habilidad de SOPORTE
+            if not self:ShouldUseSupport() then
+                self:DebugPrint("[Felhunter] Modo actual no permite Devour Magic en grupo")
+                return false
+            end
+            self:SetCooldown("Devour Magic", 8)
+            self:Print("|cff9370DBDevour Magic!|r Quitando debuff de " .. tostring(debuffedMember.name))
+            return self:ExecutePetAbilityOnTarget("Devour Magic", debuffedMember.unit, debuffedMember.name)
         end
     end
     
@@ -1061,47 +1131,46 @@ end
 function PetAI:IsEnemyCasting(unit)
     if not UnitExists(unit) then return false end
     
-    -- 1. Intentar usar API extendida (addons como ClassicCastBars la proveen)
-    if UnitCastingInfo then
-        local spellName = UnitCastingInfo(unit)
-        if spellName then return true end
+    -- En WoW 1.12, usamos CastingInfo si esta disponible
+    -- o verificamos el nombre del spell siendo casteado
+    local spellName = UnitCastingInfo and UnitCastingInfo(unit)
+    if spellName then
+        return true
     end
     
-    -- 2. Fallback: Verificación vía Combat Log (Propio de WCS_Brain)
-    local name = UnitName(unit)
-    if name and self.EnemyCastingTable and self.EnemyCastingTable[name] then
-        local castData = self.EnemyCastingTable[name]
-        if GetTime() < castData.endTime then
-            return true
-        end
-        -- Limpiar entrada expirada
-        self.EnemyCastingTable[name] = nil
+    -- Fallback: verificar por textura de casting bar (menos confiable)
+    -- Algunos addons exponen esta info
+    if CastingBarFrame and CastingBarFrame:IsVisible() then
+        -- Esto es para el jugador, no enemigos
     end
     
     return false
 end
 
 -- Verificar si tiene debuff magico (dispeleable)
-function PetAI:GetDebuffPriority(unit)
-    if not UnitExists(unit) then return 0 end
+function PetAI:HasMagicDebuff(unit)
+    if not UnitExists(unit) then return false end
     
-    local ccDebuffs = {"polymorph", "sheep", "fear", "horror", "charm", "sleep", "banish"}
-    local ctlDebuffs = {"silence", "pacify", "root", "nova", "stun", "hammer"}
-    local softDebuffs = {"slow", "frost", "curse", "hex", "immolate", "corruption"}
-
+    -- Debuffs peligrosos que queremos quitar
+    local dangerousDebuffs = {
+        "polymorph", "sheep", "fear", "horror", "charm",
+        "slow", "frost", "frozen", "root", "nova",
+        "curse", "hex", "silence", "pacify"
+    }
+    
     for i = 1, 16 do
         local texture = UnitDebuff(unit, i)
         if not texture then break end
         local texLower = string.lower(texture)
-        for _, p in pairs(ccDebuffs) do if string.find(texLower, p, 1, true) then return 3 end end
-        for _, p in pairs(ctlDebuffs) do if string.find(texLower, p, 1, true) then return 2 end end
-        for _, p in pairs(softDebuffs) do if string.find(texLower, p, 1, true) then return 1 end end
+        
+        for j = 1, WCS_TableCount(dangerousDebuffs) do
+            if string.find(texLower, dangerousDebuffs[j], 1, true) then
+                return true
+            end
+        end
     end
-    return 0
-end
-
-function PetAI:HasMagicDebuff(unit)
-    return self:GetDebuffPriority(unit) > 0
+    
+    return false
 end
 
 -- Buscar miembro del grupo con debuff magico
@@ -1337,25 +1406,25 @@ end
 
 
 -- ============================================================================
--- DECISION LOOP AUTÓNOMO CENTRALIZADO
--- Refactorizado para máxima claridad, modularidad y futura expansión por eventos
+-- DECISION LOOP AUTÃƒâ€œNOMO CENTRALIZADO
+-- Refactorizado para mÃƒÂ¡xima claridad, modularidad y futura expansiÃƒÂ³n por eventos
 -- ============================================================================
 -- ============================================================================
--- FUNCIONES DEL MODO GUARDIÁN
+-- FUNCIONES DEL MODO GUARDIÃƒÂN
 -- ============================================================================
 
--- Función principal de evaluación del modo Guardián
+-- FunciÃƒÂ³n principal de evaluaciÃƒÂ³n del modo GuardiÃƒÂ¡n
 function PetAI:EvaluateGuardianMode()
     if not self.GuardianTarget then return false end
     
     -- Buscar el unit ID del objetivo protegido
     local guardianUnit = self:FindGuardianUnit()
     if not guardianUnit then
-        self:Print("|cffff0000Advertencia:|r " .. self.GuardianTarget .. " no está en party/raid")
+        self:Print("|cffff0000Advertencia:|r " .. self.GuardianTarget .. " no estÃƒÂ¡ en party/raid")
         return false
     end
     
-    -- Verificar si el protegido existe y está vivo
+    -- Verificar si el protegido existe y estÃƒÂ¡ vivo
     if not UnitExists(guardianUnit) or UnitIsDead(guardianUnit) then
         return false
     end
@@ -1370,7 +1439,7 @@ function PetAI:EvaluateGuardianMode()
         end
     end
     
-    -- PRIORIDAD 2: Fire Shield automático (Imp)
+    -- PRIORIDAD 2: Fire Shield automÃƒÂ¡tico (Imp)
     if petType == "Imp" then
         if self:GuardianFireShield(guardianUnit) then
             return true
@@ -1413,7 +1482,7 @@ function PetAI:FindGuardianUnit()
     return nil
 end
 
--- Asistir al protegido: atacar lo que él ataca
+-- Asistir al protegido: atacar lo que ÃƒÂ©l ataca
 function PetAI:GuardianAssist(guardianUnit)
     if not guardianUnit then return false end
     
@@ -1421,13 +1490,13 @@ function PetAI:GuardianAssist(guardianUnit)
     local guardianTarget = guardianUnit .. "target"
     
     if UnitExists(guardianTarget) and UnitCanAttack("player", guardianTarget) then
-        -- Si la pet no está atacando el mismo objetivo
+        -- Si la pet no estÃƒÂ¡ atacando el mismo objetivo
         if not UnitExists("pettarget") or not UnitIsUnit("pettarget", guardianTarget) then
             -- Asistir al protegido
             TargetUnit(guardianTarget)
             PetAttack()
-            self:Print("|cFFFFD700[GUARDIÁN]|r Asistiendo a " .. self.GuardianTarget)
-            self:DebugPrint("[Guardián] Asistiendo a " .. self.GuardianTarget)
+            self:Print("|cFFFFD700[GUARDIÃƒÂN]|r Asistiendo a " .. self.GuardianTarget)
+            self:DebugPrint("[GuardiÃƒÂ¡n] Asistiendo a " .. self.GuardianTarget)
             return true
         end
     end
@@ -1435,18 +1504,18 @@ function PetAI:GuardianAssist(guardianUnit)
     return false
 end
 
--- Defender al protegido: atacar lo que lo está atacando
+-- Defender al protegido: atacar lo que lo estÃƒÂ¡ atacando
 function PetAI:GuardianDefend(guardianUnit)
     if not guardianUnit then return false end
     
-    -- Verificar si el protegido está en combate
+    -- Verificar si el protegido estÃƒÂ¡ en combate
     if not UnitAffectingCombat(guardianUnit) then
         return false
     end
     
-    -- Buscar enemigos que estén atacando al protegido
-    -- En WoW 1.12 no hay API directa para esto, así que usamos heurística:
-    -- Si el protegido está en combate y tiene bajo HP, atacar su target
+    -- Buscar enemigos que estÃƒÂ©n atacando al protegido
+    -- En WoW 1.12 no hay API directa para esto, asÃƒÂ­ que usamos heurÃƒÂ­stica:
+    -- Si el protegido estÃƒÂ¡ en combate y tiene bajo HP, atacar su target
     local guardianHP = self:GetUnitHealthPercent(guardianUnit)
     
     if guardianHP < 50 then
@@ -1455,8 +1524,8 @@ function PetAI:GuardianDefend(guardianUnit)
             if not UnitExists("pettarget") or not UnitIsUnit("pettarget", guardianTarget) then
                 TargetUnit(guardianTarget)
                 PetAttack()
-                self:Print("|cFFFF0000[GUARDIÁN]|r Defendiendo a " .. self.GuardianTarget .. " (HP: " .. string.format("%.0f", guardianHP) .. "%)")
-                self:DebugPrint("[Guardián] Defendiendo a " .. self.GuardianTarget .. " (HP: " .. string.format("%.0f", guardianHP) .. "%)")
+                self:Print("|cFFFF0000[GUARDIÃƒÂN]|r Defendiendo a " .. self.GuardianTarget .. " (HP: " .. string.format("%.0f", guardianHP) .. "%)")
+                self:DebugPrint("[GuardiÃƒÂ¡n] Defendiendo a " .. self.GuardianTarget .. " (HP: " .. string.format("%.0f", guardianHP) .. "%)")
                 return true
             end
         end
@@ -1474,14 +1543,14 @@ function PetAI:GuardianSacrifice(guardianUnit)
     
     local guardianHP = self:GetUnitHealthPercent(guardianUnit)
     
-    -- Solo sacrificarse si el protegido está en peligro crítico
+    -- Solo sacrificarse si el protegido estÃƒÂ¡ en peligro crÃƒÂ­tico
     if guardianHP < 20 and UnitAffectingCombat(guardianUnit) then
-        -- Verificar que Sacrifice esté disponible
+        -- Verificar que Sacrifice estÃƒÂ© disponible
         if not self:IsOnCooldown("Sacrifice") then
             -- Targetear al protegido y usar Sacrifice
             TargetUnit(guardianUnit)
             if self:ExecuteAbility("Sacrifice") then
-                self:Print("|cFFFF0000[GUARDIÁN]|r ¡Sacrificándose por " .. self.GuardianTarget .. "!")
+                self:Print("|cFFFF0000[GUARDIÃƒÂN]|r Ã‚Â¡SacrificÃƒÂ¡ndose por " .. self.GuardianTarget .. "!")
                 self:SetCooldown("Sacrifice", 300)
                 return true
             end
@@ -1491,7 +1560,7 @@ function PetAI:GuardianSacrifice(guardianUnit)
     return false
 end
 
--- Fire Shield automático (Imp)
+-- Fire Shield automÃƒÂ¡tico (Imp)
 function PetAI:GuardianFireShield(guardianUnit)
     if not guardianUnit then return false end
     
@@ -1512,13 +1581,13 @@ function PetAI:GuardianFireShield(guardianUnit)
         end
     end
     
-    -- Verificar si está en combate o tiene bajo HP
+    -- Verificar si estÃƒÂ¡ en combate o tiene bajo HP
     local guardianHP = self:GetUnitHealthPercent(guardianUnit)
     if UnitAffectingCombat(guardianUnit) or guardianHP < 70 then
         -- Aplicar Fire Shield
         TargetUnit(guardianUnit)
         if self:ExecuteAbility("Fire Shield") then
-            self:Print("|cFFFFD700[GUARDIÁN]|r Fire Shield aplicado a " .. self.GuardianTarget)
+            self:Print("|cFFFFD700[GUARDIÃƒÂN]|r Fire Shield aplicado a " .. self.GuardianTarget)
             self.FireShieldCache.appliedTo[self.GuardianTarget] = now
             return true
         end
@@ -1541,7 +1610,7 @@ function PetAI:Evaluate()
     if self.isThinking then return end
     self.isThinking = true
     
-    -- 1. Verificaciones básicas
+    -- 1. Verificaciones bÃƒÂ¡sicas
     if not self.ENABLED then
         self.isThinking = false
         return
@@ -1558,7 +1627,7 @@ function PetAI:Evaluate()
     -- 2. Actualizar y verificar estado de Enslave Demon
     self:CheckEnslaveStatus()
 
-    -- 3. Hook: Pre-evaluación (para eventos o módulos externos)
+    -- 3. Hook: Pre-evaluaciÃƒÂ³n (para eventos o mÃƒÂ³dulos externos)
     if self.OnPreEvaluate then
         local handled = self:OnPreEvaluate()
         if handled then
@@ -1569,7 +1638,7 @@ function PetAI:Evaluate()
 
 
     -- ============================================================================
-    -- MODO GUARDIÁN: Proteger a un compañero específico
+    -- MODO GUARDIÃƒÂN: Proteger a un compaÃƒÂ±ero especÃƒÂ­fico
     -- ============================================================================
     if self.currentMode == 4 and self.GuardianTarget then
         local now = GetTime()
@@ -1580,7 +1649,7 @@ function PetAI:Evaluate()
             
             if self:EvaluateGuardianMode() then
                 self.isThinking = false
-                return  -- Si el modo Guardián manejó la situación, salir
+                return  -- Si el modo GuardiÃƒÂ¡n manejÃƒÂ³ la situaciÃƒÂ³n, salir
             end
         end
     end
@@ -1592,7 +1661,7 @@ function PetAI:Evaluate()
         return
     end
 
-    -- 5. Hook: Permitir override de decisión por módulos externos
+    -- 5. Hook: Permitir override de decisiÃƒÂ³n por mÃƒÂ³dulos externos
     if self.OnOverrideDecision then
         local handled = self:OnOverrideDecision(petType)
         if handled then
@@ -1610,7 +1679,7 @@ function PetAI:Evaluate()
     end
 
 
-    -- 7. Integración con otros addons: priorizar defensas si hay amenaza alta o alerta de boss
+    -- 7. IntegraciÃƒÂ³n con otros addons: priorizar defensas si hay amenaza alta o alerta de boss
     local threatHigh = false
     local bossAlert = false
     if WCS_BrainIntegrations and WCS_BrainIntegrations.ThreatMeters and WCS_BrainIntegrations.ThreatMeters.IsThreatHigh then
@@ -1622,7 +1691,7 @@ function PetAI:Evaluate()
 
     self:DebugPrint("[DecisionLoop] Evaluando tipo: " .. tostring(petType) .. (threatHigh and " | THREAT ALTO" or "") .. (bossAlert and " | BOSS ALERTA" or ""))
     local evaluated = false
-    -- Lógica personalizada para futuras mascotas
+    -- LÃƒÂ³gica personalizada para futuras mascotas
     if self.CustomPetLogic[petType] then
         evaluated = self.CustomPetLogic[petType](self)
     elseif petType == "Imp" then
@@ -1649,7 +1718,7 @@ function PetAI:Evaluate()
         evaluated = self:EvaluateDoomguard()
     end
 
-    -- 8. Hook: Post-evaluación (para logging, aprendizaje, etc)
+    -- 8. Hook: Post-evaluaciÃƒÂ³n (para logging, aprendizaje, etc)
     if self.OnPostEvaluate then
         self:OnPostEvaluate(petType, evaluated)
     end
@@ -1667,25 +1736,8 @@ local function PetAI_OnEvent()
         PetAI:Print("v" .. PetAI.VERSION .. " cargado. Auto-Reenslave: ON")
     elseif event == "UNIT_PET" and arg1 == "player" then
         PetAI:OnPetChanged()
-    -- RASTREO DE CASTEO PARA 1.12
-    elseif event == "CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE" or 
-           event == "CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE" then
-        -- Formato: "Enemy begins to cast Spell."
-        local _, _, enemy, spell = string.find(arg1, "(.+) comienza a lanzar (.+)%.")
-        if not enemy then
-            _, _, enemy, spell = string.find(arg1, "(.+) begins to cast (.+)%.")
-        end
-        
-        if enemy and spell then
-            PetAI.EnemyCastingTable[enemy] = {
-                spell = spell,
-                endTime = GetTime() + 2.5 -- Asumimos 2.5s si no hay más info
-            }
-        end
     end
 end
-PetAI.frame:RegisterEvent("CHAT_MSG_SPELL_CREATURE_VS_CREATURE_DAMAGE")
-PetAI.frame:RegisterEvent("CHAT_MSG_SPELL_HOSTILEPLAYER_DAMAGE")
 PetAI.frame:SetScript("OnEvent", PetAI_OnEvent)
 
 PetAI.frame:SetScript("OnUpdate", function()
@@ -1820,7 +1872,7 @@ function PetAI:OnPlayerAction(playerDecision)
 end
 
 -- ============================================================================
--- COMANDO /PETGUARD - MODO GUARDIÁN
+-- COMANDO /PETGUARD - MODO GUARDIÃƒÂN
 -- ============================================================================
 
 SLASH_PETGUARD1 = "/petguard"
@@ -1831,7 +1883,7 @@ SlashCmdList["PETGUARD"] = function(msg)
         PetAI:Print("=== Comandos /petguard ===")
         PetAI:Print("  /petguard [nombre] - Asignar jugador a proteger")
         PetAI:Print("  /petguard clear - Limpiar objetivo protegido")
-        PetAI:Print("  /petguard show - Ver quién está protegiendo")
+        PetAI:Print("  /petguard show - Ver quiÃƒÂ©n estÃƒÂ¡ protegiendo")
         PetAI:Print("  /petguard help - Mostrar esta ayuda")
         return
     end
@@ -1850,9 +1902,9 @@ SlashCmdList["PETGUARD"] = function(msg)
         if PetAI.GuardianTarget then
             PetAI:Print("Protegiendo a: |cff00ff00" .. PetAI.GuardianTarget .. "|r")
             if PetAI.currentMode == 4 then
-                PetAI:Print("Modo: |cFFFFD700Guardián|r (Activo)")
+                PetAI:Print("Modo: |cFFFFD700GuardiÃƒÂ¡n|r (Activo)")
             else
-                PetAI:Print("Modo: " .. PetAI:GetModeName() .. " (Usa /run WCS_BrainPetAI:SetMode(4) para activar Guardián)")
+                PetAI:Print("Modo: " .. PetAI:GetModeName() .. " (Usa /run WCS_BrainPetAI:SetMode(4) para activar GuardiÃƒÂ¡n)")
             end
         else
             PetAI:Print("No hay objetivo protegido. Usa /petguard [nombre]")
@@ -1877,7 +1929,7 @@ SlashCmdList["PETGUARD"] = function(msg)
         end
     end
     
-    -- Buscar en raid si no está en party
+    -- Buscar en raid si no estÃƒÂ¡ en party
     if not found then
         for i = 1, 40 do
             local unit = "raid" .. i
@@ -1893,78 +1945,20 @@ SlashCmdList["PETGUARD"] = function(msg)
         PetAI.GuardianTarget = targetName
         PetAI:Print("Ahora protegiendo a: |cff00ff00" .. targetName .. "|r")
         
-        -- Si no está en modo Guardián, sugerir activarlo
+        -- Si no estÃƒÂ¡ en modo GuardiÃƒÂ¡n, sugerir activarlo
         if PetAI.currentMode ~= 4 then
             PetAI:SetMode(4)
-            PetAI:Print("|cFFFFD700Modo Guardián activado automáticamente|r")
+            PetAI:Print("|cFFFFD700Modo GuardiÃƒÂ¡n activado automÃƒÂ¡ticamente|r")
         end
     else
         PetAI:Print("|cffff0000Error:|r '" .. targetName .. "' no encontrado en party/raid")
-        PetAI:Print("Asegúrate de escribir el nombre exacto del jugador")
+        PetAI:Print("AsegÃƒÂºrate de escribir el nombre exacto del jugador")
     end
 end
 
 PetAI:Print("v" .. PetAI.VERSION .. " - Sistema de IA con Auto-Reenslave y Coordinacion")
 
 
--- ============================================
--- NUEVAS FUNCIONES v8.0.0
--- ============================================
 
--- Encuentra el slot de una habilidad de mascota por nombre
-function WCS_BrainPetAI:GetPetAbilitySlot(abilityName)
-    if not abilityName then return nil end
-    
-    for i = 1, 10 do
-        local name, rank = GetPetActionInfo(i)
-        if name and name == abilityName then
-            return i
-        end
-    end
-    return nil
-end
 
--- Verifica si la mascota tiene una habilidad especÃ­fica
-function WCS_BrainPetAI:PetHasAbility(abilityName)
-    return self:GetPetAbilitySlot(abilityName) ~= nil
-end
 
--- Verifica si se puede usar una habilidad (existe, no estÃ¡ en CD, hay mana)
-function WCS_BrainPetAI:CanCastPetAbility(abilityName)
-    local slot = self:GetPetAbilitySlot(abilityName)
-    if not slot then
-        if self.DEBUG then
-            DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[CanCast]|r " .. abilityName .. " - NO ENCONTRADA")
-        end
-        return false
-    end
-    
-    local name, rank, texture, isToken, isActive, autoCastAllowed, autoCastEnabled = GetPetActionInfo(slot)
-    local start, duration, enable = GetPetActionCooldown(slot)
-    
-    -- Verificar cooldown
-    if start and start > 0 and duration and duration > 0 then
-        local remaining = (start + duration) - GetTime()
-        if remaining > 0 then
-            if self.DEBUG then
-                DEFAULT_CHAT_FRAME:AddMessage(string.format("|cFFFFAA00[CanCast]|r %s - EN CD (%.1fs)", abilityName, remaining))
-            end
-            return false
-        end
-    end
-    
-    -- Verificar mana de la mascota
-    local petMana = UnitMana("pet")
-    local petMaxMana = UnitManaMax("pet")
-    if petMana and petMaxMana and petMana < (petMaxMana * 0.1) then
-        if self.DEBUG then
-            DEFAULT_CHAT_FRAME:AddMessage("|cFF00AAFF[CanCast]|r " .. abilityName .. " - SIN MANA")
-        end
-        return false
-    end
-    
-    if self.DEBUG then
-        DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[CanCast]|r " .. abilityName .. " - OK")
-    end
-    return true
-end

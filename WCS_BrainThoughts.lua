@@ -6,7 +6,7 @@
 ]]--
 
 WCS_BrainThoughts = WCS_BrainThoughts or {}
-WCS_BrainThoughts.VERSION = "8.0.0"
+WCS_BrainThoughts.VERSION = "6.4.2"
 
 -- ============================================================================
 -- CONFIGURACION
@@ -109,8 +109,8 @@ function WCS_BrainThoughts:CreateFrame()
         tile = true, tileSize = 16, edgeSize = 16,
         insets = { left = 4, right = 4, top = 4, bottom = 4 }
     })
-    frame:SetBackdropColor(0.04, 0.02, 0.08, 0.95)  -- Deep Void BG
-    frame:SetBackdropBorderColor(0.58, 0.51, 0.79, 1)  -- Deep Void Border
+    frame:SetBackdropColor(0, 0, 0, 0.8)
+    frame:SetBackdropBorderColor(0.6, 0.2, 0.8, 1)  -- Borde morado (warlock)
     
     -- Hacer draggable
     frame:RegisterForDrag("LeftButton")

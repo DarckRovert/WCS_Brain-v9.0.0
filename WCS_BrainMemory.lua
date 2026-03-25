@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainMemory.lua - Sistema de Recuerdos v8.0.0
+    WCS_BrainMemory.lua - Sistema de Recuerdos v6.6.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     El Brain recuerda encuentros anteriores y aprende de ellos
@@ -10,7 +10,7 @@
 ]]--
 
 WCS_BrainMemory = WCS_BrainMemory or {}
-WCS_BrainMemory.VERSION = "8.0.0"
+WCS_BrainMemory.VERSION = "6.6.0"
 
 -- ============================================================================
 -- ESTRUCTURA DE MEMORIA

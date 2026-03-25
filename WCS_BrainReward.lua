@@ -6,7 +6,7 @@
 ]]--
 
 WCS_BrainReward = WCS_BrainReward or {}
-WCS_BrainReward.VERSION = "8.0.0"
+WCS_BrainReward.VERSION = "6.4.2"
 
 -- ============================================================================
 -- CONFIGURACION DE RECOMPENSAS
@@ -363,7 +363,7 @@ WCS_BrainReward:ResetCombatStats()
 DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[WCS Brain Reward]|r Loaded v" .. WCS_BrainReward.VERSION)
 
 -- ============================================================================
--- TERRORMETER INTEGRATION (v8.0.0)
+-- TERRORMETER INTEGRATION (v6.5.0)
 -- ============================================================================
 
 function WCS_BrainReward:AddDPSBonus(bonus)

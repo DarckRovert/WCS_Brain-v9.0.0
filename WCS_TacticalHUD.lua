@@ -30,8 +30,14 @@ function HUD:CreateFrame()
         if WCS_BrainSaved then WCS_BrainSaved.HUD = HUD.Config end
     end)
 
-    self.BG = self.Main:CreateTexture(nil, "BACKGROUND")
-    self.BG:SetAllPoints(self.Main) self.BG:SetTexture(0, 0, 0, 0.6) 
+    self.Main:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 12,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
+    })
+    self.Main:SetBackdropColor(0.08, 0.06, 0.12, 0.85)
+    self.Main:SetBackdropBorderColor(0.58, 0.51, 0.79, 1) -- Séquito Purple
     
     self.IconTex = self.Main:CreateTexture(nil, "ARTWORK")
     self.IconTex:SetWidth(40) self.IconTex:SetHeight(40)
@@ -39,15 +45,17 @@ function HUD:CreateFrame()
     
     self.Label = self.Main:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     self.Label:SetPoint("TOPLEFT", self.IconTex, "TOPRIGHT", 10, 2)
+    self.Label:SetTextColor(1, 0.82, 0) -- Dorado
     
     self.Reason = self.Main:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     self.Reason:SetPoint("TOPLEFT", self.Label, "BOTTOMLEFT", 0, -2)
+    self.Reason:SetTextColor(0.6, 0.6, 0.6)
 
     self.Bar = CreateFrame("StatusBar", nil, self.Main)
     self.Bar:SetWidth(120) self.Bar:SetHeight(5)
     self.Bar:SetPoint("BOTTOMLEFT", self.IconTex, "BOTTOMRIGHT", 10, 2)
     self.Bar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-    self.Bar:SetStatusBarColor(0.7, 0.3, 0.9)
+    self.Bar:SetStatusBarColor(0.58, 0.51, 0.79) -- Séquito Purple
     self.Bar:SetMinMaxValues(0, 32)
 
     self.Main:Hide()

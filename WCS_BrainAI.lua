@@ -1,5 +1,5 @@
---[[
-    WCS_BrainAI.lua - Sistema de IA Inteligente v8.0.0
+Ôªø--[[
+    WCS_BrainAI.lua - Sistema de IA Inteligente v6.7.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     SISTEMAS INCLUIDOS:
@@ -11,7 +11,7 @@
 ]]--
 
 WCS_BrainAI = WCS_BrainAI or {}
-WCS_BrainAI.VERSION = "8.0.0"
+WCS_BrainAI.VERSION = "6.7.0"
 
 -- ============================================================================
 -- UTILIDADES LUA 5.0
@@ -125,7 +125,7 @@ end
 
 -- Limpiar DoTs de targets viejos (optimizado)
 WCS_BrainAI.LastCleanup = 0
-WCS_BrainAI.MaxTrackedTargets = 20  -- LÌmite de targets tracked
+WCS_BrainAI.MaxTrackedTargets = 20  -- L√≠mite de targets tracked
 function WCS_BrainAI:CleanupExpiredDoTs()
     local now = getTime()
     local expiredTargets = {}
@@ -150,7 +150,7 @@ function WCS_BrainAI:CleanupExpiredDoTs()
             self.DoTTimers[targetID][dotName] = nil
         end
         
-        -- Si no quedan DoTs activos, marcar target para eliminaciÛn
+        -- Si no quedan DoTs activos, marcar target para eliminaci√≥n
         local hasActiveDots = false
         for dotName, data in pairs(self.DoTTimers[targetID]) do
             hasActiveDots = true
@@ -167,20 +167,20 @@ function WCS_BrainAI:CleanupExpiredDoTs()
         self.DoTTimers[targetID] = nil
     end
     
-    -- Limitar n˙mero de targets tracked
+    -- Limitar n√∫mero de targets tracked
     self:EnforceTargetLimit()
 end
 
--- FunciÛn para limitar n˙mero de targets tracked
+-- Funci√≥n para limitar n√∫mero de targets tracked
 function WCS_BrainAI:EnforceTargetLimit()
     local targetCount = 0
     local oldestTargets = {}
     
-    -- Contar targets y encontrar los m·s antiguos
+    -- Contar targets y encontrar los m√°s antiguos
     for targetID, dots in pairs(self.DoTTimers) do
         targetCount = targetCount + 1
         
-        -- Encontrar el DoT m·s antiguo de este target
+        -- Encontrar el DoT m√°s antiguo de este target
         local oldestTime = getTime()
         for dotName, data in pairs(dots) do
             if data.applied < oldestTime then
@@ -191,9 +191,9 @@ function WCS_BrainAI:EnforceTargetLimit()
         table.insert(oldestTargets, {id = targetID, time = oldestTime})
     end
     
-    -- Si excedemos el lÌmite, eliminar los m·s antiguos
+    -- Si excedemos el l√≠mite, eliminar los m√°s antiguos
     if targetCount > self.MaxTrackedTargets then
-        -- Ordenar por tiempo (m·s antiguos primero)
+        -- Ordenar por tiempo (m√°s antiguos primero)
         table.sort(oldestTargets, function(a, b) return a.time < b.time end)
         
         local toRemove = targetCount - self.MaxTrackedTargets
@@ -412,7 +412,7 @@ function WCS_BrainAI:ScoreAction(action, context)
     end
     
     -- Aplicar modificadores contextuales
-    -- (El resto de la funciÛn se mantiene igual para respetar lÛgica de movimiento/execute)
+    -- (El resto de la funci√≥n se mantiene igual para respetar l√≥gica de movimiento/execute)
     
     -- Bonus en boss para DoTs
     if rotation == "sustained" and (action.priority == 7 or action.priority == 8) then
@@ -440,7 +440,7 @@ function WCS_BrainAI:ScoreAction(action, context)
         -- Lista de hechizos CON CAST TIME que NO se pueden usar mientras caminas
         -- Es mas seguro listar los que tienen cast time que los instant
         local castTimeSpells = {
-            -- Hechizos de daÒo con cast time
+            -- Hechizos de da√±o con cast time
             ["Shadow Bolt"] = true,
             ["Immolate"] = true,
             ["Soul Fire"] = true,
@@ -614,11 +614,11 @@ function WCS_BrainAI:Initialize()
     WCS_Brain.OriginalGetNextAction = WCS_Brain.GetNextAction
     
     -- Reemplazar con nuestra version inteligente
-    -- Primero consulta a Integration (DQN), si no est· activo usa scoring
+    -- Primero consulta a Integration (DQN), si no est√° activo usa scoring
     WCS_Brain.GetNextAction = function(self)
         local decision = nil
         
-        -- Si WCS_BrainIntegration est· cargado y DQN activo, usarlo
+        -- Si WCS_BrainIntegration est√° cargado y DQN activo, usarlo
         if WCS_BrainIntegration and WCS_BrainIntegration.GetDQNAction then
             local dqnAction = WCS_BrainIntegration:GetDQNAction()
             if dqnAction then
@@ -626,7 +626,7 @@ function WCS_BrainAI:Initialize()
             end
         end
         
-        -- Si DQN no est· activo o no disponible, usar sistema de scoring
+        -- Si DQN no est√° activo o no disponible, usar sistema de scoring
         if not decision then
             decision = WCS_BrainAI:GetBestAction()
         end

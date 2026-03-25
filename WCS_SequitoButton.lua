@@ -109,19 +109,20 @@ function WCS_BrainUI:CreateSequitoButton(section)
         this.borderTexture:SetVertexColor(0.0, 1.0, 0.5, 1.0)
         this.mainText:SetTextColor(1.0, 1.0, 1.0, 1)
         
-        -- Tooltip
+        -- Tooltip premium v9.0
         GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-        GameTooltip:SetText("El Séquito del Terror", 0.0, 1.0, 0.5)
-        GameTooltip:AddLine("Gestiona tu clan de brujos", 1, 1, 1)
-        GameTooltip:AddLine(" ", 1, 1, 1)
-        GameTooltip:AddLine("• Recursos y Soul Shards", 0.58, 0.51, 0.79)
-        GameTooltip:AddLine("• Asignaciones de Raid", 0.58, 0.51, 0.79)
-        GameTooltip:AddLine("• Estadísticas de Combate", 0.58, 0.51, 0.79)
-        GameTooltip:AddLine("• Grimorio de Hechizos", 0.58, 0.51, 0.79)
-        GameTooltip:AddLine("• Tracker de PvP", 0.58, 0.51, 0.79)
-        GameTooltip:AddLine("• Banco del Clan", 0.58, 0.51, 0.79)
-        GameTooltip:AddLine(" ", 1, 1, 1)
-        GameTooltip:AddLine("Click para abrir", 1.0, 0.82, 0.0)
+        GameTooltip:SetText("El Sequito del Terror", 1.0, 0.82, 0.0)
+        GameTooltip:AddLine("|cFFAAAAAAClan UI v9.0 - Grimorio del Sequito|r", 1, 1, 1)
+        GameTooltip:AddLine(" ", 0, 0, 0)
+        GameTooltip:AddLine("|cFFFFD700=== Modulos Disponibles ===|r", 1, 1, 1)
+        GameTooltip:AddLine("|cFF00FF80•|r Clan Panel - Miembros Online", 0.9, 0.9, 1)
+        GameTooltip:AddLine("|cFF00FF80•|r Estadisticas de Combate", 0.9, 0.9, 1)
+        GameTooltip:AddLine("|cFF00FF80•|r Banco del Sequito", 0.9, 0.9, 1)
+        GameTooltip:AddLine("|cFF00FF80•|r Gestion de Raid", 0.9, 0.9, 1)
+        GameTooltip:AddLine("|cFF9482C9•|r Grimorio Warlock", 0.9, 0.7, 1)
+        GameTooltip:AddLine("|cFF9482C9•|r Invocaciones y Recursos", 0.9, 0.7, 1)
+        GameTooltip:AddLine(" ", 0, 0, 0)
+        GameTooltip:AddLine("|cFFFFD700Click|r para abrir el Grimorio", 1, 0.9, 0.3)
         GameTooltip:Show()
     end)
     
@@ -139,8 +140,8 @@ function WCS_BrainUI:CreateSequitoButton(section)
         this.mainText:SetTextColor(1.0, 1.0, 1.0, 1)
         
         -- Ejecutar comando
-        if WCS_BrainClanUI and WCS_BrainClanUI.Toggle then
-            WCS_BrainClanUI:Toggle()
+        if WCS_ClanUI and WCS_ClanUI.ToggleMainFrame then
+            WCS_ClanUI:ToggleMainFrame()
         end
         
         -- Restaurar colores después de 0.1 segundos

@@ -6,7 +6,7 @@
 ]]--
 
 WCS_BrainCore = WCS_BrainCore or {}
-WCS_BrainCore.VERSION = "8.0.0"
+WCS_BrainCore.VERSION = "6.6.0"
 
 -- ============================================================================
 -- ESTADO INTERNO

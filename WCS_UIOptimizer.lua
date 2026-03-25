@@ -1,11 +1,11 @@
 --[[
     WCS_UIOptimizer.lua - Optimizador de Interfaces Gráficas
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Optimización de UI
+    Version: 6.4.2 - Optimización de UI
 ]]--
 
 WCS_UIOptimizer = WCS_UIOptimizer or {}
-WCS_UIOptimizer.VERSION = "8.0.0"
+WCS_UIOptimizer.VERSION = "6.4.2"
 
 -- ============================================================================
 -- SISTEMA DE CACHÉ DE UI

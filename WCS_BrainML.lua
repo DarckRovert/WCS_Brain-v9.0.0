@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainML.lua - Sistema de Machine Learning v8.0.0
+    WCS_BrainML.lua - Sistema de Machine Learning v6.4.2
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     SISTEMAS INCLUIDOS:
@@ -11,7 +11,7 @@
 ]]--
 
 WCS_BrainML = WCS_BrainML or {}
-WCS_BrainML.VERSION = "8.0.0"
+WCS_BrainML.VERSION = "6.4.2"
 
 -- ============================================================================
 -- UTILIDADES LUA 5.0
@@ -980,5 +980,213 @@ function WCS_BrainML:ResetStats()
     self.Data = self:DeepCopy(self.DefaultData)
     WCS_BrainSaved.ML = self.Data
     DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[BrainML]|r Estadísticas de aprendizaje reseteadas.")
+end
+
+-- ============================================================================
+-- INTERFAZ DE USUARIO (Tab 4: Aprendizaje ML)
+-- ============================================================================
+function WCS_BrainML:CreateUI()
+    if _G["WCSBrainMLFrame"] then return end
+
+    local f = CreateFrame("Frame", "WCSBrainMLFrame", UIParent)
+    f:SetWidth(680)
+    f:SetHeight(540)
+    f:Hide()
+
+    -- Fondo principal
+    f:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 16,
+        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+    })
+    f:SetBackdropColor(0.04, 0.02, 0.10, 0.95)
+    f:SetBackdropBorderColor(0.58, 0.51, 0.79, 0.9)
+
+    -- Título
+    local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint("TOP", f, "TOP", 0, -15)
+    title:SetText("|cFFCC99FFMACHINE LEARNING ENGINE|r")
+
+    -- Columna Izquierda: Estadísticas Globales
+    local leftPanel = CreateFrame("Frame", nil, f)
+    leftPanel:SetWidth(320)
+    leftPanel:SetHeight(460)
+    leftPanel:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -45)
+    leftPanel:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 8, edgeSize = 8,
+        insets = { left = 2, right = 2, top = 2, bottom = 2 }
+    })
+    leftPanel:SetBackdropColor(0.08, 0.05, 0.15, 0.85)
+    leftPanel:SetBackdropBorderColor(0.58, 0.51, 0.79, 0.7)
+
+    local leftTitle = leftPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    leftTitle:SetPoint("TOP", leftPanel, "TOP", 0, -12)
+    leftTitle:SetText("|cFFFFCC00Rendimiento de Combate|r")
+
+    local statLabels = {
+        {key = "totalCombats", label = "|cFFAAAAAACombates Tot.:|r", color = "FFFFFF"},
+        {key = "wins", label = "|cFF00FF00Victorias:|r", color = "00FF00"},
+        {key = "losses", label = "|cFFFF4444Derrotas:|r", color = "FF4444"},
+        {key = "avgDPS", label = "|cFFFFAA00DPS Promedio:|r", color = "FFAA00"},
+        {key = "totalDamage", label = "|cFFFF8888Daño Total:|r", color = "FF8888"},
+        {key = "totalTime", label = "|cFF8888FFT. Combate:|r", color = "8888FF"},
+    }
+
+    f.statTexts = {}
+    for i, item in ipairs(statLabels) do
+        local lbl = leftPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        lbl:SetPoint("TOPLEFT", leftPanel, "TOPLEFT", 12, -30 - (i - 1) * 22)
+        lbl:SetText(item.label)
+
+        local val = leftPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        val:SetPoint("TOPLEFT", leftPanel, "TOPLEFT", 160, -30 - (i - 1) * 22)
+        val:SetText("|cFF" .. item.color .. "0|r")
+
+        f.statTexts[item.key] = val
+    end
+
+    -- Tasa de aprendizaje y configuración
+    local configSep = leftPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    configSep:SetPoint("TOPLEFT", leftPanel, "TOPLEFT", 12, -175)
+    configSep:SetText("|cFFCC99FFConfiguración de Aprendizaje|r")
+
+    local lrLabel = leftPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    lrLabel:SetPoint("TOPLEFT", leftPanel, "TOPLEFT", 12, -200)
+    lrLabel:SetText("|cFFAAAAAATasa de Aprendizaje:|r")
+
+    local lrSlider = CreateFrame("Slider", "WCS_BrainMLLRSlider", leftPanel, "OptionsSliderTemplate")
+    lrSlider:SetPoint("TOPLEFT", leftPanel, "TOPLEFT", 10, -225)
+    lrSlider:SetWidth(280)
+    lrSlider:SetMinMaxValues(0.01, 0.5)
+    lrSlider:SetValueStep(0.01)
+    lrSlider:SetValue(WCS_BrainML.Config.learningRate)
+
+    _G[lrSlider:GetName().."Text"]:SetText("")
+    _G[lrSlider:GetName().."Low"]:SetText("0.01")
+    _G[lrSlider:GetName().."High"]:SetText("0.5")
+
+    local lrValText = leftPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    lrValText:SetPoint("TOP", lrSlider, "BOTTOM", 0, -3)
+    lrValText:SetText(string.format("|cFFFFCC00%.2f|r", WCS_BrainML.Config.learningRate))
+
+    lrSlider:SetScript("OnValueChanged", function()
+        local v = this:GetValue()
+        WCS_BrainML.Config.learningRate = v
+        lrValText:SetText(string.format("|cFFFFCC00%.2f|r", v))
+    end)
+
+    -- Botón Reset Stats
+    local resetBtn = CreateFrame("Button", nil, leftPanel, "UIPanelButtonTemplate")
+    resetBtn:SetPoint("BOTTOM", leftPanel, "BOTTOM", 0, 15)
+    resetBtn:SetWidth(160)
+    resetBtn:SetHeight(24)
+    resetBtn:SetText("|cFFFF6666Reset Estadísticas|r")
+    resetBtn:SetScript("OnClick", function()
+        WCS_BrainML:ResetStats()
+        if f:IsVisible() then
+            -- Refrescar UI
+        end
+    end)
+
+    -- Columna Derecha: Top Hechizos
+    local rightPanel = CreateFrame("Frame", nil, f)
+    rightPanel:SetWidth(320)
+    rightPanel:SetHeight(460)
+    rightPanel:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -45)
+    rightPanel:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 8, edgeSize = 8,
+        insets = { left = 2, right = 2, top = 2, bottom = 2 }
+    })
+    rightPanel:SetBackdropColor(0.08, 0.05, 0.15, 0.85)
+    rightPanel:SetBackdropBorderColor(0.0, 1.0, 0.5, 0.7)
+
+    local rightTitle = rightPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    rightTitle:SetPoint("TOP", rightPanel, "TOP", 0, -12)
+    rightTitle:SetText("|cFF00FF80Pesos de Hechizos Aprendidos|r")
+
+    -- 12 filas de hechizos con su peso
+    f.spellRows = {}
+    for i = 1, 12 do
+        local nameTxt = rightPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        nameTxt:SetPoint("TOPLEFT", rightPanel, "TOPLEFT", 12, -30 - (i - 1) * 32)
+        nameTxt:SetText("|cFF666666------|r")
+        nameTxt:SetWidth(160)
+
+        local weightBar = CreateFrame("StatusBar", nil, rightPanel)
+        weightBar:SetPoint("TOPLEFT", rightPanel, "TOPLEFT", 12, -42 - (i - 1) * 32)
+        weightBar:SetWidth(280)
+        weightBar:SetHeight(8)
+        weightBar:SetMinMaxValues(0, 3)
+        weightBar:SetValue(1)
+        weightBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
+        weightBar:SetStatusBarColor(0.58, 0.51, 0.79, 1)
+
+        f.spellRows[i] = { name = nameTxt, bar = weightBar }
+    end
+
+    -- OnUpdate: refrescar datos cada segundo
+    local elapsed = 0
+    f:SetScript("OnUpdate", function()
+        elapsed = elapsed + arg1
+        if elapsed < 1.0 then return end
+        elapsed = 0
+
+        if not f:IsVisible() then return end
+        if not WCS_BrainML.Data then return end
+
+        -- Actualizar estadísticas globales
+        local stats = WCS_BrainML.Data.globalStats
+        if f.statTexts["totalCombats"] then
+            f.statTexts["totalCombats"]:SetText("|cFFFFFFFF" .. (stats.totalCombats or 0) .. "|r")
+        end
+        if f.statTexts["wins"] then
+            f.statTexts["wins"]:SetText("|cFF00FF00" .. (stats.wins or 0) .. "|r")
+        end
+        if f.statTexts["losses"] then
+            f.statTexts["losses"]:SetText("|cFFFF4444" .. (stats.losses or 0) .. "|r")
+        end
+        if f.statTexts["avgDPS"] then
+            f.statTexts["avgDPS"]:SetText("|cFFFFAA00" .. string.format("%.1f", stats.avgDPS or 0) .. "|r")
+        end
+        if f.statTexts["totalDamage"] then
+            f.statTexts["totalDamage"]:SetText("|cFFFF8888" .. math.floor(stats.totalDamage or 0) .. "|r")
+        end
+        if f.statTexts["totalTime"] then
+            local mins = math.floor((stats.totalTime or 0) / 60)
+            local secs = math.floor(math.mod((stats.totalTime or 0), 60))
+            f.statTexts["totalTime"]:SetText("|cFF8888FF" .. mins .. "m " .. secs .. "s|r")
+        end
+
+        -- Actualizar pesos de hechizos (ordenados por valor desc)
+        local spells = {}
+        for name, w in pairs(WCS_BrainML.Data.spellWeights or {}) do
+            table.insert(spells, {name = name, w = w})
+        end
+        table.sort(spells, function(a, b) return a.w > b.w end)
+
+        local rowCount = math.min(table.getn(spells), 12)
+        for i = 1, 12 do
+            local row = f.spellRows[i]
+            if i <= rowCount then
+                local sp = spells[i]
+                local color = sp.w >= 1.5 and "00FF00" or (sp.w >= 1.0 and "FFCC00" or "FF6666")
+                row.name:SetText("|cFF" .. color .. sp.name .. "|r |cFFAAAAAA(" .. string.format("%.2f", sp.w) .. ")|r")
+                row.bar:SetValue(sp.w)
+                row.bar:SetStatusBarColor(
+                    sp.w >= 1.5 and 0 or (sp.w >= 1.0 and 1 or 1),
+                    sp.w >= 1.5 and 1 or (sp.w >= 1.0 and 0.8 or 0.2),
+                    0, 1
+                )
+            else
+                row.name:SetText("|cFF666666------|r")
+                row.bar:SetValue(0)
+            end
+        end
+    end)
 end
 

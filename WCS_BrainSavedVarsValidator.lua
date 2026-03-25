@@ -11,13 +11,13 @@ WCS_BrainSavedVarsValidator = WCS_BrainSavedVarsValidator or {}
 local Validator = WCS_BrainSavedVarsValidator
 
 Validator.VERSION = "1.0.0"
-Validator.CURRENT_DATA_VERSION = "8.0.0"
+Validator.CURRENT_DATA_VERSION = "6.8.0"
 
 -- ============================================================================
 -- ESTRUCTURA DE DATOS POR DEFECTO
 -- ============================================================================
 Validator.DefaultStructure = {
-    VERSION = "8.0.0",
+    version = "6.8.0",
     
     settings = {
         enabled = true,
@@ -101,7 +101,7 @@ function Validator:ValidateMainSaved()
     
     -- Verificar versión
     if not WCS_BrainSaved.version then
-        WCS_BrainSaved.VERSION = "8.0.0"
+        WCS_BrainSaved.version = "6.0.0"
         table.insert(result.warnings, "Versión no encontrada - asumiendo 6.0.0")
     end
     

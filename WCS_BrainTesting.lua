@@ -10,7 +10,7 @@
 ]]--
 
 WCS_BrainTesting = WCS_BrainTesting or {}
-WCS_BrainTesting.VERSION = "8.0.0"
+WCS_BrainTesting.VERSION = "6.4.2"
 WCS_BrainTesting.enabled = false
 
 -- ============================================================================

@@ -1,11 +1,11 @@
 --[[
     WCS_BrainPetUI.lua - Ventana de Gestion de Mascota
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Boton mejorado con luz indicadora y pulso
+    Version 6.4.2 - Boton mejorado con luz indicadora y pulso
 ]]--
 
 WCS_BrainPetUI = WCS_BrainPetUI or {}
-WCS_BrainPetUI.VERSION = "8.0.0"
+WCS_BrainPetUI.VERSION = "6.4.2"
 
 -- Variables locales para el boton
 local petPulseTimer = 0
@@ -19,10 +19,12 @@ WCS_BrainPetUI.buffIcons = {}       -- Iconos de buffs
 WCS_BrainPetUI.lowHealthWarned = false  -- Flag para advertencia de salud baja
 
 -- Colores (definidos antes de usarse)
-local PET_COLOR_PURPLE = {r=0.58, g=0.51, b=0.79}
-local PET_COLOR_GREEN = {r=0, g=1, b=0}
-local PET_COLOR_RED = {r=1, g=0, b=0}
-local PET_COLOR_CYAN = {r=0, g=0.8, b=1}
+local PET_COLOR_PURPLE = {r=0.58, g=0.51, b=0.79} -- #9482C9
+local PET_COLOR_GREEN = {r=0.0, g=1.0, b=0.5} -- Fel Green
+local PET_COLOR_RED = {r=1.0, g=0.2, b=0.2} -- Emergency Red
+local PET_COLOR_CYAN = {r=0.2, g=0.4, b=0.8} -- Magic Blue
+local PET_COLOR_GOLD = {r=1.0, g=0.8, b=0.0} -- Prestige Gold
+
 
 -- Funcion para flash de color al cambiar modo IA
 function WCS_BrainPetUI:FlashModeChange()
@@ -237,7 +239,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     configBtn:SetBackdropBorderColor(0.4, 0.3, 0.5, 1)
     local configText = configBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     configText:SetPoint("CENTER", configBtn, "CENTER", 0, 0)
-    configText:SetText("Configuración")
+    configText:SetText("ConfiguraciÃ³n")
     configBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowConfigWindow()
         WCS_BrainPetUI.ContextMenu:Hide()
@@ -263,7 +265,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     statsBtn:SetBackdropBorderColor(0.4, 0.3, 0.5, 1)
     local statsText = statsBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     statsText:SetPoint("CENTER", statsBtn, "CENTER", 0, 0)
-    statsText:SetText("Estadísticas")
+    statsText:SetText("EstadÃ­sticas")
     statsBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowStatsWindow()
         WCS_BrainPetUI.ContextMenu:Hide()
@@ -289,7 +291,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     resetBtn:SetBackdropBorderColor(0.4, 0.3, 0.5, 1)
     local resetText = resetBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     resetText:SetPoint("CENTER", resetBtn, "CENTER", 0, 0)
-    resetText:SetText("Resetear Posición")
+    resetText:SetText("Resetear PosiciÃ³n")
     resetBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ResetButtonPosition()
         WCS_BrainPetUI.ContextMenu:Hide()
@@ -321,7 +323,7 @@ end
 -- VENTANA DE CONFIGURACION
 -- ============================================================================
 function WCS_BrainPetUI:LoadConfig()
-    -- Inicializar tabla de configuración si no existe
+    -- Inicializar tabla de configuraciÃ³n si no existe
     if not WCS_BrainCharSaved then
         WCS_BrainCharSaved = {}
     end
@@ -335,7 +337,7 @@ function WCS_BrainPetUI:LoadConfig()
         }
     end
     
-    -- Cargar configuración guardada
+    -- Cargar configuraciÃ³n guardada
     local cfg = WCS_BrainCharSaved.petUIConfig
     self.showNotifications = cfg.showNotifications
     self.playSounds = cfg.playSounds
@@ -355,7 +357,7 @@ function WCS_BrainPetUI:SaveConfig()
         compactMode = self.compactMode or false
     }
     
-    DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS Brain]|r Configuración guardada exitosamente")
+    DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS Brain]|r ConfiguraciÃ³n guardada exitosamente")
     
     -- Aplicar configuraciones al sistema
     self:ApplyConfig()
@@ -367,13 +369,13 @@ function WCS_BrainPetUI:ApplyConfig()
         self:ToggleCompactMode(self.compactMode)
     end
     
-    -- Aplicar auto-seguir si está activado
+    -- Aplicar auto-seguir si estÃ¡ activado
     if self.autoFollow and UnitExists("pet") then
         -- Integrar con PetAI para auto-seguir
         if WCS_BrainPetAI and WCS_BrainPetAI.SetAutoFollow then
             WCS_BrainPetAI:SetAutoFollow(true)
         else
-            -- Fallback: usar comando básico de WoW
+            -- Fallback: usar comando bÃ¡sico de WoW
             PetFollow()
         end
     end
@@ -390,13 +392,13 @@ function WCS_BrainPetUI:CreateBuffIcons()
     -- Crear contenedor para iconos de buffs
     self.buffIcons = {}
     
-    -- Crear hasta 4 iconos de buffs pequeños
+    -- Crear hasta 4 iconos de buffs pequeÃ±os
     for i = 1, 4 do
         local buffIcon = btn:CreateTexture(nil, "OVERLAY")
         buffIcon:SetWidth(12)
         buffIcon:SetHeight(12)
         
-        -- Posicionar en fila horizontal arriba del botón
+        -- Posicionar en fila horizontal arriba del botÃ³n
         local xOffset = -30 + (i - 1) * 14
         buffIcon:SetPoint("TOP", btn, "TOP", xOffset, 2)
         
@@ -422,7 +424,7 @@ function WCS_BrainPetUI:UpdateBuffIcons()
     
     -- Escanear buffs de la mascota
     local buffCount = 0
-    for i = 1, 16 do  -- Máximo 16 buffs en WoW 1.12
+    for i = 1, 16 do  -- MÃ¡ximo 16 buffs en WoW 1.12
         local buffTexture = UnitBuff("pet", i)
         if buffTexture then
             buffCount = buffCount + 1
@@ -447,7 +449,7 @@ function WCS_BrainPetUI:CreateHappinessBar()
     
     local btn = self.Button
     
-    -- Crear barra de felicidad pequeña
+    -- Crear barra de felicidad pequeÃ±a
     local happyBar = CreateFrame("StatusBar", nil, btn)
     happyBar:SetWidth(50)
     happyBar:SetHeight(3)
@@ -475,13 +477,13 @@ function WCS_BrainPetUI:UpdateHappinessBar()
     end
     
     -- GetPetHappiness() solo funciona para Hunters en WoW Classic
-    -- Para Warlocks, no aplica, así que ocultamos la barra
+    -- Para Warlocks, no aplica, asÃ­ que ocultamos la barra
     local happiness, damagePercentage, loyaltyRate = GetPetHappiness()
     
     if happiness then
         self.happinessBar:SetValue(happiness)
         
-        -- Colores según felicidad
+        -- Colores segÃºn felicidad
         if happiness == 1 then
             -- Infeliz - Rojo
             self.happinessBar:SetStatusBarColor(1, 0, 0)
@@ -510,15 +512,15 @@ function WCS_BrainPetUI:MonitorPetEvents()
     local maxHealth = UnitHealthMax("pet")
     local healthPercent = (currentHealth / maxHealth) * 100
     
-    -- Detectar cambio brusco de salud (daño crítico)
+    -- Detectar cambio brusco de salud (daÃ±o crÃ­tico)
     if self.lastPetHealth > 0 then
         local healthDiff = self.lastPetHealth - currentHealth
         local healthDiffPercent = (healthDiff / maxHealth) * 100
         
-        -- Si perdió más del 30% de salud de golpe
+        -- Si perdiÃ³ mÃ¡s del 30% de salud de golpe
         if healthDiffPercent > 30 then
             if self.showNotifications then
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS]|r ¡Mascota recibió daño crítico! (" .. math.floor(healthDiffPercent) .. "%)")
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS]|r Â¡Mascota recibiÃ³ daÃ±o crÃ­tico! (" .. math.floor(healthDiffPercent) .. "%)")
             end
             if self.playSounds then
                 PlaySound("RaidWarning")
@@ -526,12 +528,12 @@ function WCS_BrainPetUI:MonitorPetEvents()
         end
     end
     
-    -- Detectar salud crítica (< 20%)
+    -- Detectar salud crÃ­tica (< 20%)
     if healthPercent < 20 and healthPercent > 0 then
         -- Solo notificar una vez cuando baja de 20%
         if not self.lowHealthWarned then
             if self.showNotifications then
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS]|r ¡Mascota en peligro! Salud: " .. math.floor(healthPercent) .. "%")
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS]|r Â¡Mascota en peligro! Salud: " .. math.floor(healthPercent) .. "%")
             end
             if self.playSounds then
                 PlaySound("RaidWarning")
@@ -542,12 +544,12 @@ function WCS_BrainPetUI:MonitorPetEvents()
         self.lowHealthWarned = false
     end
     
-    -- Guardar salud actual para próxima comparación
+    -- Guardar salud actual para prÃ³xima comparaciÃ³n
     self.lastPetHealth = currentHealth
 end
 
 -- ============================================================================
--- MODO COMPACTO - Reduce tamaño del botón y oculta elementos
+-- MODO COMPACTO - Reduce tamaÃ±o del botÃ³n y oculta elementos
 -- ============================================================================
 function WCS_BrainPetUI:ToggleCompactMode(enable)
     if not self.Button then return end
@@ -555,7 +557,7 @@ function WCS_BrainPetUI:ToggleCompactMode(enable)
     local btn = self.Button
     
     if enable then
-        -- MODO COMPACTO: Botón pequeño, solo ícono y luz
+        -- MODO COMPACTO: BotÃ³n pequeÃ±o, solo Ã­cono y luz
         btn:SetWidth(40)
         btn:SetHeight(40)
         
@@ -566,7 +568,7 @@ function WCS_BrainPetUI:ToggleCompactMode(enable)
         if btn.hpBar then btn.hpBar:Hide() end
         if btn.manaBar then btn.manaBar:Hide() end
         
-        -- Ajustar tamaño del ícono
+        -- Ajustar tamaÃ±o del Ã­cono
         if btn.bg then
             btn.bg:SetWidth(32)
             btn.bg:SetHeight(32)
@@ -574,7 +576,7 @@ function WCS_BrainPetUI:ToggleCompactMode(enable)
         
         DEFAULT_CHAT_FRAME:AddMessage("|cFF9370DB[WCS]|r Modo Compacto activado")
     else
-        -- MODO NORMAL: Botón grande con todos los elementos
+        -- MODO NORMAL: BotÃ³n grande con todos los elementos
         btn:SetWidth(64)
         btn:SetHeight(64)
         
@@ -585,7 +587,7 @@ function WCS_BrainPetUI:ToggleCompactMode(enable)
         if btn.hpBar then btn.hpBar:Show() end
         if btn.manaBar then btn.manaBar:Show() end
         
-        -- Restaurar tamaño del ícono
+        -- Restaurar tamaÃ±o del Ã­cono
         if btn.bg then
             btn.bg:SetWidth(56)
             btn.bg:SetHeight(56)
@@ -610,7 +612,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
         return
     end
     
-    -- Cargar configuración guardada
+    -- Cargar configuraciÃ³n guardada
     self:LoadConfig()
     
     local window = CreateFrame("Frame", "WCSBrainConfigWindow", UIParent)
@@ -635,7 +637,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
     
     local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     title:SetPoint("TOP", window, "TOP", 0, -15)
-    title:SetText("|cFFCC66FFConfiguración WCS Brain|r")
+    title:SetText("|cFFCC66FFConfiguraciÃ³n WCS Brain|r")
     
     local closeBtn = CreateFrame("Button", nil, window, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", window, "TOPRIGHT", -5, -5)
@@ -643,7 +645,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
     
     local yOffset = -50
     
-    -- Opción 1: Mostrar notificaciones
+    -- OpciÃ³n 1: Mostrar notificaciones
     local notifCheck = CreateFrame("CheckButton", "WCSConfigNotif", window, "UICheckButtonTemplate")
     notifCheck:SetPoint("TOPLEFT", window, "TOPLEFT", 20, yOffset)
     notifCheck:SetWidth(24)
@@ -657,7 +659,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
     
     yOffset = yOffset - 35
     
-    -- Opción 2: Sonido de alerta
+    -- OpciÃ³n 2: Sonido de alerta
     local soundCheck = CreateFrame("CheckButton", "WCSConfigSound", window, "UICheckButtonTemplate")
     soundCheck:SetPoint("TOPLEFT", window, "TOPLEFT", 20, yOffset)
     soundCheck:SetWidth(24)
@@ -675,7 +677,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
     
     yOffset = yOffset - 35
     
-    -- Opción 3: Auto-seguir al jugador
+    -- OpciÃ³n 3: Auto-seguir al jugador
     local followCheck = CreateFrame("CheckButton", "WCSConfigFollow", window, "UICheckButtonTemplate")
     followCheck:SetPoint("TOPLEFT", window, "TOPLEFT", 20, yOffset)
     followCheck:SetWidth(24)
@@ -689,7 +691,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
     
     yOffset = yOffset - 35
     
-    -- Opción 4: Modo compacto
+    -- OpciÃ³n 4: Modo compacto
     local compactCheck = CreateFrame("CheckButton", "WCSConfigCompact", window, "UICheckButtonTemplate")
     compactCheck:SetPoint("TOPLEFT", window, "TOPLEFT", 20, yOffset)
     compactCheck:SetWidth(24)
@@ -703,7 +705,7 @@ function WCS_BrainPetUI:ShowConfigWindow()
     
     yOffset = yOffset - 50
     
-    -- Botón Guardar
+    -- BotÃ³n Guardar
     local saveBtn = CreateFrame("Button", nil, window, "GameMenuButtonTemplate")
     saveBtn:SetPoint("BOTTOM", window, "BOTTOM", 0, 20)
     saveBtn:SetWidth(120)
@@ -737,14 +739,14 @@ function WCS_BrainPetUI:ShowStatsWindow()
     if self.StatsWindow then
         if self.StatsWindow:IsVisible() then
             self.StatsWindow:Hide()
-            -- Detener actualización automática
+            -- Detener actualizaciÃ³n automÃ¡tica
             if self.statsUpdateTimer then
                 self.statsUpdateTimer = nil
             end
         else
             self:UpdateStatsWindow()
             self.StatsWindow:Show()
-            -- Iniciar actualización automática
+            -- Iniciar actualizaciÃ³n automÃ¡tica
             self:StartStatsAutoUpdate()
         end
         return
@@ -772,7 +774,7 @@ function WCS_BrainPetUI:ShowStatsWindow()
     
     local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     title:SetPoint("TOP", window, "TOP", 0, -15)
-    title:SetText("|cFFCC66FFEstadísticas de Mascota|r")
+    title:SetText("|cFFCC66FFEstadÃ­sticas de Mascota|r")
     
     local closeBtn = CreateFrame("Button", nil, window, "UIPanelCloseButton")
     closeBtn:SetPoint("TOPRIGHT", window, "TOPRIGHT", -5, -5)
@@ -781,7 +783,7 @@ function WCS_BrainPetUI:ShowStatsWindow()
         WCS_BrainPetUI.statsUpdateTimer = nil
     end)
     
-    -- Crear textos de estadísticas
+    -- Crear textos de estadÃ­sticas
     local yOffset = -50
     local stats = {}
     
@@ -797,10 +799,10 @@ function WCS_BrainPetUI:ShowStatsWindow()
     stats.name = CreateStatLine("Nombre", "---")
     stats.level = CreateStatLine("Nivel", "---")
     stats.health = CreateStatLine("Salud", "---")
-    stats.mana = CreateStatLine("Maná/Energía", "---")
+    stats.mana = CreateStatLine("ManÃ¡/EnergÃ­a", "---")
     stats.happiness = CreateStatLine("Felicidad", "---")
     stats.loyalty = CreateStatLine("Lealtad", "---")
-    stats.damage = CreateStatLine("Daño", "---")
+    stats.damage = CreateStatLine("DaÃ±o", "---")
     stats.armor = CreateStatLine("Armadura", "---")
     stats.attackSpeed = CreateStatLine("Vel. Ataque", "---")
     stats.mode = CreateStatLine("Modo IA", "---")
@@ -809,10 +811,10 @@ function WCS_BrainPetUI:ShowStatsWindow()
     
     yOffset = yOffset - 15
     
-    -- Texto de actualización automática
+    -- Texto de actualizaciÃ³n automÃ¡tica
     local autoUpdateText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     autoUpdateText:SetPoint("TOPLEFT", window, "TOPLEFT", 20, yOffset)
-    autoUpdateText:SetText("|cFF888888Actualización automática: 2s|r")
+    autoUpdateText:SetText("|cFF888888ActualizaciÃ³n automÃ¡tica: 2s|r")
     autoUpdateText:SetJustifyH("LEFT")
     window.autoUpdateText = autoUpdateText
     
@@ -862,10 +864,10 @@ function WCS_BrainPetUI:UpdateStatsWindow()
         stats.name:SetText("Nombre: |cFFFF6666Sin mascota invocada|r")
         stats.level:SetText("Nivel: |cFF888888---|r")
         stats.health:SetText("Salud: |cFF888888---|r")
-        stats.mana:SetText("Maná/Energía: |cFF888888---|r")
+        stats.mana:SetText("ManÃ¡/EnergÃ­a: |cFF888888---|r")
         stats.happiness:SetText("Felicidad: |cFF888888---|r")
         stats.loyalty:SetText("Lealtad: |cFF888888---|r")
-        stats.damage:SetText("Daño: |cFF888888---|r")
+        stats.damage:SetText("DaÃ±o: |cFF888888---|r")
         stats.armor:SetText("Armadura: |cFF888888---|r")
         stats.attackSpeed:SetText("Vel. Ataque: |cFF888888---|r")
         stats.mode:SetText("Modo IA: |cFF888888---|r")
@@ -874,7 +876,7 @@ function WCS_BrainPetUI:UpdateStatsWindow()
         return
     end
     
-    -- Obtener información de la mascota
+    -- Obtener informaciÃ³n de la mascota
     local petName = UnitName("pet") or "Mascota"
     local petLevel = UnitLevel("pet") or 0
     local petHealth = UnitHealth("pet") or 0
@@ -884,12 +886,12 @@ function WCS_BrainPetUI:UpdateStatsWindow()
     local petHappiness = GetPetHappiness() or 0
     local petLoyalty = GetPetLoyalty() or 0
     
-    -- Actualizar nombre con color según clase
+    -- Actualizar nombre con color segÃºn clase
     local petClass = UnitClass("pet") or "Pet"
     stats.name:SetText("Nombre: |cFFFFD700" .. petName .. "|r")
     stats.level:SetText("Nivel: |cFFFFFFFF" .. petLevel .. "|r")
     
-    -- Salud con color según porcentaje
+    -- Salud con color segÃºn porcentaje
     local hpPercent = math.floor((petHealth / petHealthMax) * 100)
     local hpColor = "|cFF00FF00"
     if hpPercent < 30 then
@@ -899,12 +901,12 @@ function WCS_BrainPetUI:UpdateStatsWindow()
     end
     stats.health:SetText("Salud: " .. hpColor .. petHealth .. " / " .. petHealthMax .. " (" .. hpPercent .. "%)|r")
     
-    -- Maná/Energía
+    -- ManÃ¡/EnergÃ­a
     if petManaMax > 0 then
         local manaPercent = math.floor((petMana / petManaMax) * 100)
-        stats.mana:SetText("Maná/Energía: |cFF00CCFF" .. petMana .. " / " .. petManaMax .. " (" .. manaPercent .. "%)|r")
+        stats.mana:SetText("ManÃ¡/EnergÃ­a: |cFF00CCFF" .. petMana .. " / " .. petManaMax .. " (" .. manaPercent .. "%)|r")
     else
-        stats.mana:SetText("Maná/Energía: |cFF888888N/A|r")
+        stats.mana:SetText("ManÃ¡/EnergÃ­a: |cFF888888N/A|r")
     end
     
     -- Felicidad
@@ -922,10 +924,10 @@ function WCS_BrainPetUI:UpdateStatsWindow()
     local loyaltyText = petLoyalty > 0 and ("Nivel " .. petLoyalty) or "Desconocida"
     stats.loyalty:SetText("Lealtad: |cFFFFFFFF" .. loyaltyText .. "|r")
     
-    -- Estadísticas de combate (intentar obtener reales)
+    -- EstadÃ­sticas de combate (intentar obtener reales)
     local baseDamage = UnitDamage("pet") or (petLevel * 2)
     local damageMax = baseDamage * 1.5
-    stats.damage:SetText("Daño: |cFFFFFFFF" .. math.floor(baseDamage) .. " - " .. math.floor(damageMax) .. "|r")
+    stats.damage:SetText("DaÃ±o: |cFFFFFFFF" .. math.floor(baseDamage) .. " - " .. math.floor(damageMax) .. "|r")
     
     local armor = UnitArmor("pet") or (petLevel * 10)
     stats.armor:SetText("Armadura: |cFFFFFFFF" .. math.floor(armor) .. "|r")
@@ -976,7 +978,7 @@ function WCS_BrainPetUI:ResetButtonPosition()
     self.Button:ClearAllPoints()
     self.Button:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
     
-    DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS Brain]|r Posición del botón reseteada al centro")
+    DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS Brain]|r PosiciÃ³n del botÃ³n reseteada al centro")
     
     -- Flash visual para confirmar
     local btn = self.Button
@@ -1073,7 +1075,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     
     local configText = configBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     configText:SetPoint("CENTER", configBtn, "CENTER", 0, 0)
-    configText:SetText("Configuración")
+    configText:SetText("ConfiguraciÃ³n")
     
     configBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowConfigWindow()
@@ -1105,7 +1107,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     
     local statsText = statsBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     statsText:SetPoint("CENTER", statsBtn, "CENTER", 0, 0)
-    statsText:SetText("Estadísticas")
+    statsText:SetText("EstadÃ­sticas")
     
     statsBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowStatsWindow()
@@ -1137,7 +1139,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     
     local resetText = resetBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     resetText:SetPoint("CENTER", resetBtn, "CENTER", 0, 0)
-    resetText:SetText("Resetear Posición")
+    resetText:SetText("Resetear PosiciÃ³n")
     
     resetBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ResetButtonPosition()
@@ -1236,7 +1238,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     
     local configText = configBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     configText:SetPoint("CENTER", configBtn, "CENTER", 0, 0)
-    configText:SetText("Configuración")
+    configText:SetText("ConfiguraciÃ³n")
     
     configBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowConfigWindow()
@@ -1268,7 +1270,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     
     local statsText = statsBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     statsText:SetPoint("CENTER", statsBtn, "CENTER", 0, 0)
-    statsText:SetText("Estadísticas")
+    statsText:SetText("EstadÃ­sticas")
     
     statsBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowStatsWindow()
@@ -1300,7 +1302,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     
     local resetText = resetBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     resetText:SetPoint("CENTER", resetBtn, "CENTER", 0, 0)
-    resetText:SetText("Resetear Posición")
+    resetText:SetText("Resetear PosiciÃ³n")
     
     resetBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ResetButtonPosition()
@@ -1391,7 +1393,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     configBtn:SetBackdropBorderColor(0.4, 0.3, 0.5, 1)
     local configText = configBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     configText:SetPoint("CENTER", configBtn, "CENTER", 0, 0)
-    configText:SetText("Configuración")
+    configText:SetText("ConfiguraciÃ³n")
     configBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowConfigWindow()
         WCS_BrainPetUI.ContextMenu:Hide()
@@ -1417,7 +1419,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     statsBtn:SetBackdropBorderColor(0.4, 0.3, 0.5, 1)
     local statsText = statsBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     statsText:SetPoint("CENTER", statsBtn, "CENTER", 0, 0)
-    statsText:SetText("Estadísticas")
+    statsText:SetText("EstadÃ­sticas")
     statsBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ShowStatsWindow()
         WCS_BrainPetUI.ContextMenu:Hide()
@@ -1443,7 +1445,7 @@ function WCS_BrainPetUI:CreateContextMenu()
     resetBtn:SetBackdropBorderColor(0.4, 0.3, 0.5, 1)
     local resetText = resetBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     resetText:SetPoint("CENTER", resetBtn, "CENTER", 0, 0)
-    resetText:SetText("Resetear Posición")
+    resetText:SetText("Resetear PosiciÃ³n")
     resetBtn:SetScript("OnClick", function()
         WCS_BrainPetUI:ResetButtonPosition()
         WCS_BrainPetUI.ContextMenu:Hide()
@@ -1528,7 +1530,7 @@ function WCS_BrainPetUI:CreatePetButton()
     local petNameText = btn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     petNameText:SetPoint("TOP", statusText, "BOTTOM", 0, -1)
     petNameText:SetText("---")
-    petNameText:SetTextColor(PET_COLOR_CYAN.r, PET_COLOR_CYAN.g, PET_COLOR_CYAN.b)
+    petNameText:SetTextColor(PET_COLOR_GOLD.r, PET_COLOR_GOLD.g, PET_COLOR_GOLD.b)
     btn.petNameText = petNameText
     
     -- Indicador visual de modo de IA
@@ -1539,14 +1541,18 @@ function WCS_BrainPetUI:CreatePetButton()
     btn.iaModeText = iaModeText
     
     -- =============================
-    -- Barras de vida y maná (debajo del botón)
+    -- Barras de vida y manÃ¡ (debajo del botÃ³n)
     -- =============================
     local hpBar = CreateFrame("StatusBar", nil, btn)
     hpBar:SetWidth(64)
     hpBar:SetHeight(7)
     hpBar:SetPoint("TOPLEFT", btn, "BOTTOMLEFT", 0, -2)
     hpBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-    hpBar:SetStatusBarColor(0, 1, 0, 0.8)
+    hpBar:SetStatusBarColor(PET_COLOR_GREEN.r, PET_COLOR_GREEN.g, PET_COLOR_GREEN.b, 0.8)
+    local hpBg = hpBar:CreateTexture(nil, "BACKGROUND")
+    hpBg:SetAllPoints(hpBar)
+    hpBg:SetTexture("Interface\\TargetingFrame\\UI-StatusBar")
+    hpBg:SetVertexColor(0.2, 0.2, 0.2, 0.6)
     hpBar:SetMinMaxValues(0, 100)
     hpBar:SetValue(0)
     btn.hpBar = hpBar
@@ -1556,7 +1562,11 @@ function WCS_BrainPetUI:CreatePetButton()
     manaBar:SetHeight(7)
     manaBar:SetPoint("TOPLEFT", hpBar, "BOTTOMLEFT", 0, -2)
     manaBar:SetStatusBarTexture("Interface\\TargetingFrame\\UI-StatusBar")
-    manaBar:SetStatusBarColor(0, 0.5, 1, 0.8)
+    manaBar:SetStatusBarColor(PET_COLOR_CYAN.r, PET_COLOR_CYAN.g, PET_COLOR_CYAN.b, 0.8)
+    local manaBg = manaBar:CreateTexture(nil, "BACKGROUND")
+    manaBg:SetAllPoints(manaBar)
+    manaBg:SetTexture("Interface\\TargetingFrame\\UI-StatusBar")
+    manaBg:SetVertexColor(0.2, 0.2, 0.2, 0.6)
     manaBar:SetMinMaxValues(0, 100)
     manaBar:SetValue(0)
     btn.manaBar = manaBar
@@ -1568,7 +1578,7 @@ function WCS_BrainPetUI:CreatePetButton()
         GameTooltip:AddLine(" ")
         
         if UnitExists("pet") then
-            -- Información de la mascota
+            -- InformaciÃ³n de la mascota
             local petName = UnitName("pet") or "Mascota"
             local petLevel = UnitLevel("pet") or 1
             GameTooltip:AddLine("|cFFFFD700" .. petName .. "|r |cFFFFFFFF(Nivel " .. petLevel .. ")|r", 1, 1, 1)
@@ -1585,7 +1595,7 @@ function WCS_BrainPetUI:CreatePetButton()
             end
             GameTooltip:AddLine("Salud: " .. hpColor .. hp .. "/" .. maxHp .. " (" .. hpPercent .. "%)|r", 1, 1, 1)
             
-            -- Maná/Energía
+            -- ManÃ¡/EnergÃ­a
             local mana = UnitMana("pet") or 0
             local maxMana = UnitManaMax("pet") or 1
             if maxMana > 0 then
@@ -1623,7 +1633,7 @@ function WCS_BrainPetUI:CreatePetButton()
         btn:SetAlpha(0.7)
         btn.border:SetAlpha(1.0)
         
-        -- Restaurar después de 0.1 segundos
+        -- Restaurar despuÃ©s de 0.1 segundos
         local restoreFrame = CreateFrame("Frame")
         local elapsed = 0
         restoreFrame:SetScript("OnUpdate", function()
@@ -1639,11 +1649,15 @@ function WCS_BrainPetUI:CreatePetButton()
             if IsShiftKeyDown() then
                 -- WCS_BrainPetUI:ToggleCompactMode() -- TODO: Implementar en futuro
             else
-                -- Click normal: Abrir panel o menú contextual
-                WCS_BrainPetUI:Toggle()
+                -- Click normal: Abrir panel maestro en la pestaña de Mascota
+                if WCS_BrainUI and WCS_BrainUI.SelectTabByName then
+                    WCS_BrainUI:SelectTabByName("Mascota")
+                else
+                    WCS_BrainPetUI:Toggle()
+                end
             end
         elseif arg1 == "RightButton" then
-            -- Shift+Click Derecho: Abrir menú contextual
+            -- Shift+Click Derecho: Abrir menÃº contextual
             if IsShiftKeyDown() then
                 WCS_BrainPetUI:CreateContextMenu()
             else
@@ -1777,12 +1791,12 @@ function WCS_BrainPetUI:UpdateButtonVisuals()
         -- Calcular porcentaje de salud para efectos especiales
         local healthPercent = (petDataCache.health / petDataCache.maxHealth) * 100
         
-        -- Pulso base más suave
+        -- Pulso base mÃ¡s suave
         local pulseAlpha = 0.6 + 0.4 * math.sin(petPulseTimer * PET_PULSE_SPEED)
         
         -- Efecto glow cuando salud baja (< 30%)
         if healthPercent < 30 then
-            -- Pulso rápido y más intenso en peligro
+            -- Pulso rÃ¡pido y mÃ¡s intenso en peligro
             pulseAlpha = 0.7 + 0.3 * math.sin(petPulseTimer * PET_PULSE_SPEED * 2)
             color = PET_COLOR_RED
             btn.light:SetVertexColor(1, 0, 0, 1)  -- Rojo intenso
@@ -1825,8 +1839,8 @@ function WCS_BrainPetUI:UpdateButtonVisuals()
     self:MonitorPetEvents()
     btn.petNameText:SetText(petName)
     if hasPet then
-        btn.petNameText:SetTextColor(PET_COLOR_CYAN.r, PET_COLOR_CYAN.g, PET_COLOR_CYAN.b)
-        -- Actualizar barras de vida y maná
+        btn.petNameText:SetTextColor(PET_COLOR_GOLD.r, PET_COLOR_GOLD.g, PET_COLOR_GOLD.b)
+        -- Actualizar barras de vida y manÃ¡
         local hp = petDataCache.health
         local hpMax = petDataCache.maxHealth
         if hpMax == 0 then hpMax = 1 end
@@ -2312,26 +2326,33 @@ end
 -- TOGGLE/SHOW/HIDE
 -- ============================================================================
 function WCS_BrainPetUI:Toggle()
-    if not self.Window then
-        self:CreateWindow()
+    if WCS_BrainUI and WCS_BrainUI.MainFrame and WCS_BrainUI.MainFrame:IsVisible() and WCS_BrainUI.tabDataList and WCS_BrainUI.MainFrame.currentTab then
+        if WCS_BrainUI.tabDataList[WCS_BrainUI.MainFrame.currentTab].name == "Mascota" then
+            WCS_BrainUI:Toggle()
+            return
+        end
     end
     
-    if self.Window then
-        if self.Window:IsVisible() then
-            self:Hide()
-        else
-            self:Show()
-        end
+    if self.Window and self.Window:IsVisible() and (not WCS_BrainUI or not WCS_BrainUI.MainFrame or not WCS_BrainUI.MainFrame:IsVisible()) then
+        self:Hide()
+    else
+        self:Show()
     end
 end
 
 function WCS_BrainPetUI:Show()
-    if not self.Window then
-        self:CreateWindow()
-    end
-    if self.Window then
-        self.Window:Show()
+    if WCS_BrainUI and WCS_BrainUI.SelectTabByName then
+        WCS_BrainUI:SelectTabByName("Mascota")
+        if not self.Window then self:CreateWindow() end
         self:UpdateWindow()
+    else
+        if not self.Window then
+            self:CreateWindow()
+        end
+        if self.Window then
+            self.Window:Show()
+            self:UpdateWindow()
+        end
     end
 end
 
@@ -2381,12 +2402,8 @@ initFrame:SetScript("OnEvent", function()
     if event == "PLAYER_LOGIN" or event == "PLAYER_ENTERING_WORLD" then
         if not WCS_BrainPetUI.initialized then
             WCS_BrainPetUI.initialized = true
-            -- Guard: Solo crear boton para clases con mascotas persistentes
-            local _, cls = UnitClass("player")
-            if cls == "WARLOCK" or cls == "HUNTER" then
-                WCS_BrainPetUI:CreatePetButton()
-                DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS]|r PetUI Button cargado")
-            end
+            WCS_BrainPetUI:CreatePetButton()
+            DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS]|r PetUI Button cargado")
         end
     elseif event == "UNIT_PET" or event == "UNIT_HEALTH" or event == "PLAYER_PET_CHANGED" then
         -- Forzar actualizacion del cache
@@ -2401,3 +2418,6 @@ end)
 -- ============================================================================
 -- CREAR BOTON DE MASCOTA (Version mejorada)
 -- ============================================================================
+
+
+

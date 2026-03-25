@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainTutorialUI.lua - Interfaz Gráfica del Tutorial v8.0.0
+    WCS_BrainTutorialUI.lua - Interfaz Gráfica del Tutorial v6.5.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Ventana visual para el tutorial interactivo
@@ -23,15 +23,13 @@ function WCS_BrainTutorialUI:CreateFrame()
     frame:SetHeight(300)
     frame:SetPoint("CENTER", 0, 100)
     frame:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
         tile = true,
-        tileSize = 16,
-        edgeSize = 16,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        tileSize = 32,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 }
     })
-    frame:SetBackdropColor(0.04, 0.02, 0.08, 0.95)
-    frame:SetBackdropBorderColor(0.58, 0.51, 0.79, 1)
     frame:SetMovable(true)
     frame:EnableMouse(true)
     frame:RegisterForDrag("LeftButton")

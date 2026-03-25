@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainLogger.lua - Sistema de Logging Mejorado v8.0.0
+    WCS_BrainLogger.lua - Sistema de Logging Mejorado v6.6.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Sistema de logging con niveles, colores y filtros
@@ -10,7 +10,7 @@
 ]]--
 
 WCS_BrainLogger = WCS_BrainLogger or {}
-WCS_BrainLogger.VERSION = "8.0.0"
+WCS_BrainLogger.VERSION = "6.6.0"
 
 -- ============================================================================
 -- NIVELES DE LOG

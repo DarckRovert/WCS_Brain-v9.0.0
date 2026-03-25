@@ -1,11 +1,11 @@
 --[[
     WCS_BrainAutoCapture.lua - Captura Automatica de Transiciones
     Compatible con Lua 5.0 (Turtle WoW)
-    Version 8.0.0 - Sin spam de mensajes
+    Version: 6.4.2 - Sin spam de mensajes
 ]]--
 
 WCS_BrainAutoCapture = WCS_BrainAutoCapture or {}
-WCS_BrainAutoCapture.VERSION = "8.0.0"
+WCS_BrainAutoCapture.VERSION = "6.4.2"
 
 WCS_BrainAutoCapture.Enabled = false
 WCS_BrainAutoCapture.CaptureFrame = nil

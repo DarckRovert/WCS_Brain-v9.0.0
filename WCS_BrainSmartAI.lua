@@ -8,7 +8,7 @@ WCS_BrainSmartAI = {}
 -- CONFIGURACIÓN Y CONSTANTES
 -- ============================================
 
-local SMART_AI_VERSION = "8.0.0"
+local SMART_AI_VERSION = "6.7.0"
 local DEBUG_MODE = false
 
 -- Constantes de combate
@@ -18,7 +18,7 @@ local THREAT_THRESHOLD_HIGH = 80
 local THREAT_THRESHOLD_MEDIUM = 60
 
 -- Pesos para scoring de hechizos
-local WEIGHTS = {
+WCS_BrainSmartAI.Weights = {
     DPS = 1.0,              -- Daño por segundo
     EFFICIENCY = 0.8,       -- Daño por mana
     THREAT = 0.6,           -- Generación de amenaza
@@ -517,34 +517,34 @@ function WCS_BrainSmartAI:CalculateSpellScore(spellData)
     -- Factor 1: DPS del hechizo
     if spellData.damage and spellData.castTime then
         local dps = spellData.damage / math.max(spellData.castTime, GLOBAL_COOLDOWN)
-        score = score + (dps * WEIGHTS.DPS * situation.dpsMultiplier)
+        score = score + (dps * WCS_BrainSmartAI.Weights.DPS * situation.dpsMultiplier)
     end
     
     -- Factor 2: Eficiencia de mana
     if spellData.damage and spellData.cost then
         local efficiency = spellData.damage / math.max(spellData.cost, 1)
-        score = score + (efficiency * WEIGHTS.EFFICIENCY * situation.efficiencyMultiplier)
+        score = score + (efficiency * WCS_BrainSmartAI.Weights.EFFICIENCY * situation.efficiencyMultiplier)
     end
     
     -- Factor 3: Amenaza
     if spellData.threat then
         local threatModifier = situation.shouldReduceThreat and -1 or 1
-        score = score + (spellData.threat * WEIGHTS.THREAT * threatModifier)
+        score = score + (spellData.threat * WCS_BrainSmartAI.Weights.THREAT * threatModifier)
     end
     
     -- Factor 4: Utilidad
     if spellData.utility then
-        score = score + (spellData.utility * WEIGHTS.UTILITY)
+        score = score + (spellData.utility * WCS_BrainSmartAI.Weights.UTILITY)
     end
     
     -- Factor 5: Urgencia
     if spellData.urgent then
-        score = score + (100 * WEIGHTS.URGENCY)
+        score = score + (100 * WCS_BrainSmartAI.Weights.URGENCY)
     end
     
     -- Factor 6: Supervivencia
     if spellData.defensive then
-        score = score + (situation.dangerLevel * WEIGHTS.SURVIVABILITY)
+        score = score + (situation.dangerLevel * WCS_BrainSmartAI.Weights.SURVIVABILITY)
     end
     
     -- Penalización si no podemos pagar el mana
@@ -932,4 +932,163 @@ SmartAIFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
 
 DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[WCS SmartAI]|r Cargado v" .. SMART_AI_VERSION .. " - Usa /smartai para ayuda")
 DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[WCS SmartAI]|r Tracking de amenaza activado")
+
+-- ============================================
+-- INTERFAZ DE USUARIO (Tab 2)
+-- ============================================
+
+function WCS_BrainSmartAI:CreateUI()
+    if _G["WCSBrainSmartAIFrame"] then return end
+    
+    local f = CreateFrame("Frame", "WCSBrainSmartAIFrame", UIParent)
+    f:SetWidth(680)
+    f:SetHeight(490)
+    f:Hide()
+    
+    -- Contenedor interior oscuro
+    local bg = CreateFrame("Frame", nil, f)
+    bg:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10)
+    bg:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -10, 10)
+    bg:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 16,
+        insets = { left = 4, right = 4, top = 4, bottom = 4 }
+    })
+    bg:SetBackdropColor(0.04, 0.02, 0.08, 0.9)   -- Fondo oscuro (BG_DARK)
+    bg:SetBackdropBorderColor(0, 1, 0.5, 0.8)    -- Borde fel green (AI)
+    
+    -- Título Central
+    local title = f:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    title:SetPoint("TOP", bg, "TOP", 0, -15)
+    title:SetText("|cFF00FF80SMART AI ENGINE|r")
+    
+    -- Info del Motor
+    local subtitle = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    subtitle:SetPoint("TOP", title, "BOTTOM", 0, -5)
+    subtitle:SetText("|cFFAAAAAAAnálisis de contexto, DPS, Eficiencia y Resiliencia|r")
+    
+    -- Checkbox ON/OFF
+    local enableCheck = CreateFrame("CheckButton", nil, bg, "UICheckButtonTemplate")
+    enableCheck:SetPoint("TOPLEFT", bg, "TOPLEFT", 20, -20)
+    enableCheck:SetChecked(true)
+    
+    local enableLabel = bg:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    enableLabel:SetPoint("LEFT", enableCheck, "RIGHT", 5, 0)
+    enableLabel:SetText("Activar Smart AI Override")
+    
+    -- Panel de Análisis en Vivo (top-right, sin solapar el checkbox)
+    local analysisPanel = CreateFrame("Frame", nil, bg)
+    analysisPanel:SetWidth(285)
+    analysisPanel:SetHeight(110)
+    analysisPanel:SetPoint("TOPRIGHT", bg, "TOPRIGHT", -20, -45)
+    analysisPanel:SetBackdrop({
+        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 8, edgeSize = 8,
+        insets = { left = 2, right = 2, top = 2, bottom = 2 }
+    })
+    analysisPanel:SetBackdropColor(0.1, 0.1, 0.2, 0.8)
+    analysisPanel:SetBackdropBorderColor(0.5, 0.5, 0.5, 0.5)
+    
+    local analysisTitle = analysisPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    analysisTitle:SetPoint("TOP", analysisPanel, "TOP", 0, -10)
+    analysisTitle:SetText("|cFFFFFF00Análisis de Combate en Vivo|r")
+    
+    local roleText = analysisPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    roleText:SetPoint("TOPLEFT", analysisPanel, "TOPLEFT", 15, -35)
+    roleText:SetText("Role Detectado: |cFFFFFFFF" .. WCS_BrainSmartAI:GetPlayerRole() .. "|r")
+    f.roleText = roleText
+    
+    local manaStrat = analysisPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    manaStrat:SetPoint("TOPLEFT", roleText, "BOTTOMLEFT", 0, -15)
+    manaStrat:SetText("Mana Strategy: |cFF0088FF" .. WCS_BrainSmartAI:GetManaStrategy() .. "|r")
+    f.manaStrat = manaStrat
+    
+    local threatLevel = analysisPanel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    threatLevel:SetPoint("TOPLEFT", manaStrat, "BOTTOMLEFT", 0, -15)
+    threatLevel:SetText("Nivel Amenaza: |cFFFF6600" .. math.floor(WCS_BrainSmartAI:EstimateThreatLevel()) .. "%|r")
+    f.threatLevel = threatLevel
+    
+    -- Panel de Ajuste de Pesos (Weights) - debajo del checkbox y título
+    local weightsTitle = bg:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    weightsTitle:SetPoint("TOPLEFT", bg, "TOPLEFT", 25, -85)
+    weightsTitle:SetText("|cFFCC99FFPonderación de Hechizos|r")
+    
+    local descWeights = bg:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    descWeights:SetPoint("TOPLEFT", weightsTitle, "BOTTOMLEFT", 0, -4)
+    descWeights:SetText("|cFF888888Ajusta cómo la IA valora diferentes factores al decidir qué hechizo lanzar|r")
+    
+    local function CreateWeightSlider(parent, name, key, id, x, y)
+        local slider = CreateFrame("Slider", "WCS_BrainSmartAISlider" .. id, parent, "OptionsSliderTemplate")
+        slider:SetPoint("TOPLEFT", parent, "TOPLEFT", x, y)
+        slider:SetMinMaxValues(0.0, 3.0)
+        slider:SetValueStep(0.1)
+        slider:SetWidth(180)
+        
+        local text = _G[slider:GetName().."Text"]
+        text:SetText(name)
+        
+        local low = _G[slider:GetName().."Low"]
+        low:SetText("0.0")
+        
+        local high = _G[slider:GetName().."High"]
+        high:SetText("3.0")
+        
+        -- Valor actual
+        local valText = slider:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+        valText:SetPoint("TOP", slider, "BOTTOM", 0, -3)
+        valText:SetText(string.format("%.1f", WCS_BrainSmartAI.Weights[key]))
+        
+        slider:SetValue(WCS_BrainSmartAI.Weights[key])
+        
+        slider:SetScript("OnValueChanged", function()
+            local val = this:GetValue()
+            valText:SetText(string.format("%.1f", val))
+            WCS_BrainSmartAI.Weights[key] = val
+        end)
+    end
+    
+    -- Columna 1 (izquierda) - offset Y ajustado para 490px
+    CreateWeightSlider(bg, "|cFFFF3333DPS|r (Daño Neto)",             "DPS",           1, 20,  -140)
+    CreateWeightSlider(bg, "|cFF3388FFEficiencia|r (Daño/Mana)",       "EFFICIENCY",    2, 20,  -195)
+    CreateWeightSlider(bg, "|cFFFF8833Amenaza|r (Aggro)",              "THREAT",        3, 20,  -250)
+    
+    -- Columna 2 (derecha)
+    CreateWeightSlider(bg, "|cFF33FF33Utilidad|r (CC/Debuffs)",        "UTILITY",       4, 340, -140)
+    CreateWeightSlider(bg, "|cFFFFFF33Urgencia|r (Ejecución)",          "URGENCY",       5, 340, -195)
+    CreateWeightSlider(bg, "|cFFFF33FFSupervivencia|r (Defensa)",       "SURVIVABILITY", 6, 340, -250)
+    
+    local resetDefaultsBtn = CreateFrame("Button", nil, bg, "UIPanelButtonTemplate")
+    resetDefaultsBtn:SetPoint("TOPLEFT", bg, "TOPLEFT", 240, -310)
+    resetDefaultsBtn:SetWidth(150)
+    resetDefaultsBtn:SetHeight(25)
+    resetDefaultsBtn:SetText("Restaurar Valores")
+    resetDefaultsBtn:SetScript("OnClick", function()
+        WCS_BrainSmartAI.Weights = {
+            DPS = 1.0, EFFICIENCY = 0.8, THREAT = 0.6,
+            UTILITY = 0.7, URGENCY = 1.2, SURVIVABILITY = 1.5
+        }
+        _G["WCS_BrainSmartAISlider1"]:SetValue(1.0)
+        _G["WCS_BrainSmartAISlider2"]:SetValue(0.8)
+        _G["WCS_BrainSmartAISlider3"]:SetValue(0.6)
+        _G["WCS_BrainSmartAISlider4"]:SetValue(0.7)
+        _G["WCS_BrainSmartAISlider5"]:SetValue(1.2)
+        _G["WCS_BrainSmartAISlider6"]:SetValue(1.5)
+    end)
+    
+    -- Evento OnUpdate para el análisis en vivo
+    local updateTimer = 0
+    f:SetScript("OnUpdate", function()
+        updateTimer = updateTimer + arg1
+        if updateTimer > 0.5 then
+            updateTimer = 0
+            if f:IsVisible() then
+                f.roleText:SetText("Role Detectado: |cFFFFFFFF" .. WCS_BrainSmartAI:GetPlayerRole() .. "|r")
+                f.manaStrat:SetText("Mana Strategy: |cFF0088FF" .. WCS_BrainSmartAI:GetManaStrategy() .. "|r")
+                f.threatLevel:SetText("Nivel Amenaza: |cFFFF6600" .. math.floor(WCS_BrainSmartAI:EstimateThreatLevel()) .. "%|r")
+            end
+        end
+    end)
+end
 

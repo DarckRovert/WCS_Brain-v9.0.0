@@ -1,11 +1,11 @@
 --[[
     WCS_UpdateManager.lua - Sistema Central de Actualizaciones Optimizado
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Optimización de Rendimiento
+    Version: 6.4.2 - Optimización de Rendimiento
 ]]--
 
 WCS_UpdateManager = WCS_UpdateManager or {}
-WCS_UpdateManager.VERSION = "8.0.0"
+WCS_UpdateManager.VERSION = "6.4.2"
 
 -- ============================================================================
 -- CONFIGURACIÓN DE FRECUENCIAS

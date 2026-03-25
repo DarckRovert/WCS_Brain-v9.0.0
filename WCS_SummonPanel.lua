@@ -68,23 +68,6 @@ function WCS_SummonPanel:Initialize()
     systemText:SetText("|cffffaa00Sistema:|r Inactivo")
     panel.systemText = systemText
     
-    -- Checkbox de Auto-Accept Summons
-    local autoAcceptCb = CreateFrame("CheckButton", "WCS_SummonAutoAcceptCheck", statusPanel, "UICheckButtonTemplate")
-    autoAcceptCb:SetPoint("TOPRIGHT", -170, -65)
-    autoAcceptCb:SetWidth(24)
-    autoAcceptCb:SetHeight(24)
-    _G[autoAcceptCb:GetName() .. "Text"]:SetText("Auto-Aceptar Invocaciones")
-    autoAcceptCb:SetScript("OnClick", function()
-        if not WCS_ClanUI_SavedVars or not WCS_ClanUI_SavedVars.settings then return end
-        WCS_ClanUI_SavedVars.settings.autoAcceptSummons = this:GetChecked()
-        if this:GetChecked() then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[Summon]|r Auto-Aceptar activado.")
-        else
-            DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[Summon]|r Auto-Aceptar desactivado.")
-        end
-    end)
-    panel.autoAcceptCb = autoAcceptCb
-    
     -- Cola de summons
     local queuePanel = CreateFrame("Frame", nil, panel)
     queuePanel:SetPoint("TOPLEFT", 10, -160)
@@ -182,37 +165,6 @@ function WCS_SummonPanel:Initialize()
         WCS_SummonPanel:SummonNext()
     end)
     
-    local createMacroBtn = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-    createMacroBtn:SetWidth(180)
-    createMacroBtn:SetHeight(30)
-    createMacroBtn:SetPoint("TOPLEFT", 10, btnY - 40)
-    createMacroBtn:SetText("Crear Macro Summon")
-    createMacroBtn:SetScript("OnClick", function()
-        WCS_SummonPanel:CreateSummonMacro()
-    end)
-    
-    -- Checkbox de Auto-Aceptar
-    local autoAcceptCb = CreateFrame("CheckButton", "WCS_SummonPanel_AutoAccept", panel, "UICheckButtonTemplate")
-    autoAcceptCb:SetPoint("TOPLEFT", 10, btnY - 80)
-    autoAcceptCb:SetWidth(24)
-    autoAcceptCb:SetHeight(24)
-    
-    local autoAcceptText = autoAcceptCb:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    autoAcceptText:SetPoint("LEFT", autoAcceptCb, "RIGHT", 5, 0)
-    autoAcceptText:SetText("Auto-Aceptar Invocaciones")
-    
-    autoAcceptCb:SetScript("OnClick", function()
-        if not WCS_ClanUI_SavedVars then WCS_ClanUI_SavedVars = {} end
-        if not WCS_ClanUI_SavedVars.settings then WCS_ClanUI_SavedVars.settings = {} end
-        WCS_ClanUI_SavedVars.settings.autoAcceptSummons = this:GetChecked()
-        if this:GetChecked() then
-            DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[Summon]|r Auto-Aceptar Invocaciones ACTIVADO")
-        else
-            DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[Summon]|r Auto-Aceptar Invocaciones DESACTIVADO")
-        end
-    end)
-    panel.autoAcceptCb = autoAcceptCb
-    
     self.panel = panel
     
     -- Registrar eventos
@@ -220,24 +172,13 @@ function WCS_SummonPanel:Initialize()
     panel:RegisterEvent("CHAT_MSG_RAID")
     panel:RegisterEvent("CHAT_MSG_PARTY")
     panel:RegisterEvent("BAG_UPDATE")
-    panel:RegisterEvent("CONFIRM_SUMMON")
     panel:SetScript("OnEvent", function()
         if event == "CHAT_MSG_GUILD" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_PARTY" then
             WCS_SummonPanel:OnChatMessage(arg1, arg2)
         elseif event == "BAG_UPDATE" then
             WCS_SummonPanel:UpdateDisplay()
-        elseif event == "CONFIRM_SUMMON" then
-            if WCS_ClanUI_SavedVars and WCS_ClanUI_SavedVars.settings and WCS_ClanUI_SavedVars.settings.autoAcceptSummons then
-                ConfirmSummon()
-                StaticPopup_Hide("CONFIRM_SUMMON")
-                DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[Summon]|r Invocación aceptada automáticamente.")
-            end
         end
     end)
-    
-    if WCS_ClanUI_SavedVars and WCS_ClanUI_SavedVars.settings then
-        panel.autoAcceptCb:SetChecked(WCS_ClanUI_SavedVars.settings.autoAcceptSummons)
-    end
     
     self:UpdateDisplay()
 end
@@ -578,26 +519,6 @@ end
 function WCS_SummonPanel:Hide()
     if self.panel then
         self.panel:Hide()
-    end
-end
-
-function WCS_SummonPanel:CreateSummonMacro()
-    local name = "WCS_Summon"
-    local icon = 1 -- "Spell_Shadow_Twilight"
-    local body = "/cast Ritual of Summoning\n/ra Invocando a %t! Clic al portal!"
-    
-    local index = GetMacroIndexByName(name)
-    if index > 0 then
-        EditMacro(index, name, icon, body, 1)
-        DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[Summon Panel]|r Macro " .. name .. " actualizada.")
-    else
-        local numAcc, numChar = GetNumMacros()
-        if numChar >= 18 then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[Summon Panel]|r Límite de macros alcanzado (18).")
-        else
-            CreateMacro(name, icon, body, 1, 1)
-            DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[Summon Panel]|r Macro " .. name .. " creada.")
-        end
     end
 end
 

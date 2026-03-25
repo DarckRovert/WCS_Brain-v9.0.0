@@ -1,90 +1,94 @@
 ## Interface: 11200
-## Title: |cff9482C9WCS BRAIN|r |cffffffffv8.2.0|r [God-Tier]
-## Notes: Master Orchestrator for El Séquito del Terror. Complete Tactical Suite.
-## Author: DarckRovert / Antigravity
-## SavedVariables: WCS_BrainSaved, WCS_BrainDQNButtonConfig, WCS_BrainThinkingButtonConfig, WCS_BrainButtonBarConfig, WCS_BrainMetricsSaved, WCS_BrainContextualSaved, WCS_BrainTutorialButtonSaved, WCS_ClanUI_SavedVars, WCS_BankData, WCS_PvPTrackerData, WCS_RaidManagerData, WCS_StatisticsData, WCS_BrainLearningSaved, WCS_BrainButtonBarConfig, WCS_BrainDQNButtonConfig, WCS_BrainThinkingButtonConfig, WCS_BrainTutorialButtonSaved
+## Title: |cFF9482C9WCS|r |cFF00FF00Brain|r - Cerebro Central Inteligente
+## Notes: Sistema de IA para Warlock - Exclusivo de El Sequito del Terror
+## Notes-esES: Sistema de IA para Warlock - Exclusivo de El Sequito del Terror
+## Author: Elnazzareno (DarckRovert)
+## X-Guild: El Sequito del Terror
+## Version: 8.3.7
+## SavedVariables: WCS_BrainSaved, WCS_BrainDQNButtonConfig, WCS_BrainThinkingButtonConfig, WCS_BrainButtonBarConfig, WCS_BrainMetricsSaved, WCS_BrainContextualSaved, WCS_BrainTutorialButtonSaved, WCS_ClanUI_SavedVars, WCS_BankData, WCS_PvPTrackerData, WCS_RaidManagerData, WCS_BrainLearningSaved
 ## SavedVariablesPerCharacter: WCS_BrainCharSaved
 
-# [0] Native Integration
-Bindings.xml
 
-# [1] Foundation & Infrastructure
-WCS_Base.lua
-WCS_Core.lua
-WCS_Logger.lua
+## ===========================================
+## ORDEN DE CARGA - Sistema Inteligente v8.3.7
+## ===========================================
+
+## HELPERS LUA 5.0 (Cargarse PRIMERO - usado por todo lo demás)
 WCS_Helpers.lua
 WCS_EventManager.lua
 WCS_ResourceManager.lua
-WCS_DataManager.lua
-WCS_SavedVarsValidator.lua
-WCS_AutoCapture.lua
-WCS_BrainAutoCapture.lua
 
-# [2] Optimized Logistics & Clan UI (El Séquito)
-WCS_BrainClanUI.lua
-WCS_ClanPanel.lua
-WCS_ClanBank.lua
-WCS_SummonManager.lua
-WCS_SummonPanel.lua
-WCS_RaidManager.lua
-WCS_WarlockResources.lua
-WCS_Statistics.lua
-WCS_Grimoire.lua
-WCS_BossManager.lua
-WCS_PvPTracker.lua
+## FASE 3 - NUEVAS FEATURES
+WCS_BrainEventThrottle.lua
+WCS_BrainNotifications.lua
+WCS_BrainWarlockNotifications.lua
+WCS_BrainSavedVarsValidator.lua
+WCS_BrainSafety.lua
 
-# [3] AI Core (The 110+ Modules Foundation)
+## NUEVOS MODULOS
+WCS_BrainLogger.lua
+WCS_BrainCache.lua
+WCS_BrainLocale.lua
+WCS_BrainMemory.lua
+WCS_BrainMacros.lua
+WCS_BrainPvP.lua
+WCS_BrainPetChat.lua
+WCS_BrainAchievements.lua
+WCS_BrainTutorial.lua
+WCS_BrainTutorialUI.lua
+WCS_BrainTutorialButton.lua
+WCS_BrainProfilesEnhanced.lua
+WCS_BrainThinkingUI.lua
+WCS_BrainThinkingButton.lua
+WCS_BrainButtonBar.lua
+
+## NÚCLEO DEL SISTEMA
 WCS_SpellLocalization.lua
 WCS_SpellDB.lua
 WCS_SpellDB_Patch.lua
-WCS_SpellManager.lua
 WCS_BrainCore.lua
 WCS_Brain.lua
 WCS_BrainCleanup.lua
+
+## SISTEMAS DE IA
 WCS_BrainSim.lua
 WCS_BrainML.lua
 WCS_BrainDQN.lua
 WCS_BrainState.lua
 WCS_BrainReward.lua
 WCS_BrainActions.lua
+
+## NUEVOS MÓDULOS
 WCS_BrainTesting.lua
 WCS_BrainMetrics.lua
 WCS_BrainCombatLogger.lua
 WCS_BrainContextual.lua
 WCS_BrainIntegrations.lua
-WCS_BrainIntegration.lua
 WCS_BrainLearning.lua
+
+## TERRORMETER INTEGRATION
 WCS_BrainTerrorMeter.lua
+
+## INTEGRACIÓN DQN
+WCS_BrainIntegration.lua
+
+## SISTEMA DE DECISIONES
 WCS_BrainAI.lua
 WCS_BrainSmartAI.lua
 WCS_BrainSmartAI_Integration.lua
+
+## CONTROLADOR DE COMBATE UNIFICADO
 WCS_BrainCombatCache.lua
 WCS_BrainCombatCache_GuardianExt.lua
 WCS_BrainCombatController.lua
 
-# [4] Tactical HUD & Advanced interfaces / UIs
-WCS_BrainHUD.lua
-WCS_TacticalHUD.lua
-WCS_BrainUI.lua
-WCS_SequitoButton.lua
-WCS_BrainButton.lua
-WCS_BrainDQNUI.lua
-WCS_BrainDQNButton.lua
-WCS_BrainThoughts.lua
-WCS_BrainDiagnostics.lua
-WCS_BrainTutorial.lua
-WCS_BrainTutorialUI.lua
-WCS_BrainTutorialButton.lua
-WCS_BrainThinkingUI.lua
-WCS_BrainThinkingButton.lua
-WCS_BrainButtonBar.lua
-WCS_BrainProfiles.lua
-WCS_BrainAutoProfiles.lua
-WCS_BrainProfilesButton.lua
-WCS_BrainProfilesUI.lua
-WCS_BrainProfilesEnhanced.lua
+## SISTEMA DE EJECUCIÓN AUTOMÁTICA
+WCS_BrainAutoExecute.lua
 
-# [5] Pet Intelligence & Security
+## CAPTURA AUTOMÁTICA
+WCS_BrainAutoCapture.lua
+
+## SISTEMA DE MASCOTAS (RE-ACTIVADO)
 WCS_BrainPetAI.lua
 WCS_BrainPetAICleanup.lua
 WCS_BrainPetAI_CoordinationEnhanced.lua
@@ -97,36 +101,51 @@ WCS_BrainMajorDemons.lua
 WCS_BrainPetSocial.lua
 WCS_BrainPetEmotions.lua
 WCS_BrainPetLearning.lua
-WCS_BrainPetChat.lua
-WCS_BrainPetUI.lua
-WCS_PetManager.lua
 
-# [6] System Utilities & Optimization
-WCS_BrainCache.lua
-WCS_BrainLocale.lua
-WCS_BrainLogger.lua
-WCS_BrainMemory.lua
-WCS_BrainMacros.lua
-WCS_BrainPvP.lua
-WCS_BrainAutoExecute.lua
-WCS_BrainAchievements.lua
+WCS_BrainPetUI.lua
+WCS_BrainTabPanels.lua
+
+## INTERFACES DE USUARIO
+WCS_BrainHUD.lua
+WCS_BrainUI.lua
+WCS_SequitoButton.lua
+WCS_BrainButton.lua
+WCS_BrainDQNUI.lua
+WCS_BrainDQNButton.lua
+WCS_BrainThoughts.lua
+WCS_BrainDiagnostics.lua
+
+## SISTEMA DE PERFILES
+WCS_BrainProfiles.lua
+WCS_BrainAutoProfiles.lua
+WCS_BrainProfilesButton.lua
+WCS_BrainProfilesUI.lua
+
+## UI DEL CLAN - EL SEQUITO DEL TERROR
+WCS_BrainClanUI.lua
+WCS_ClanPanel.lua
+WCS_WarlockResources.lua
+WCS_RaidManager.lua
+WCS_Statistics.lua
+WCS_Grimoire.lua
+WCS_SummonPanel.lua
+WCS_ClanBank.lua
+WCS_PvPTracker.lua
+
+## CORRECCIONES Y PARCHES
+WCS_Lua50_ErrorCheck.lua
+
+## OPTIMIZACIÓN
+WCS_UpdateManager.lua
+WCS_Profiler.lua
+WCS_StringOptimizer.lua
+WCS_UIOptimizer.lua
+WCS_LazyLoader.lua
+
+## DASHBOARDS
 WCS_BrainDashboard.lua
 WCS_BrainDashboard_Debug.lua
 WCS_BrainDashboard_Test.lua
 WCS_BrainDashboard_Inspect.lua
 WCS_BrainWeakAuras.lua
 WCS_BrainBossMods.lua
-WCS_NotificationManager.lua
-WCS_UpdateManager.lua
-WCS_Profiler.lua
-WCS_StringOptimizer.lua
-WCS_UIOptimizer.lua
-WCS_LazyLoader.lua
-WCS_Lua50_ErrorCheck.lua
-WCS_BrainWarlockNotifications.lua
-WCS_BrainNotifications.lua
-WCS_BrainEventThrottle.lua
-WCS_BrainSafety.lua
-WCS_ClassEngine.lua
-WCS_ClassRotations.lua
-WCS_DecisionEngine.lua

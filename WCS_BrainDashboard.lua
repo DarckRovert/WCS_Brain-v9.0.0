@@ -1,5 +1,5 @@
 -- WCS_BrainDashboard.lua
--- Dashboard de Rendimiento en Tiempo Real para WCS_Brain v8.0.0
+-- Dashboard de Rendimiento en Tiempo Real para WCS_Brain v6.9.0
 -- Muestra métricas de CPU, memoria, eventos, y estado del addon
 
 if not WCS_Brain then return end
@@ -87,7 +87,7 @@ function Dashboard:Initialize()
     self.updateFrame = updateFrame
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Info("Dashboard inicializado. Usa /wcsdash para abrir.")
+        WCS_Brain.Notifications:Info("Dashboard inicializado. Usa /wcsdash para abrir.")
     end
 end
 
@@ -449,7 +449,7 @@ function Dashboard:Show()
     self.isVisible = true
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Info("Dashboard abierto")
+        WCS_Brain.Notifications:Info("Dashboard abierto")
     end
 end
 
@@ -491,7 +491,7 @@ function Dashboard:ResetStats()
     end
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Success("Estadísticas reseteadas")
+        WCS_Brain.Notifications:Success("Estadísticas reseteadas")
     else
         DEFAULT_CHAT_FRAME:AddMessage("WCS Dashboard: Estadísticas reseteadas", 0, 1, 0)
     end
@@ -522,5 +522,5 @@ SLASH_WCSDASHBOARD2 = "/wcsdashboard"
 
 -- Inicializar al cargar
 if WCS_Brain.Notifications then
-    WCS_BrainNotifications:Info("Dashboard de rendimiento cargado. Usa /wcsdash")
+    WCS_Brain.Notifications:Info("Dashboard de rendimiento cargado. Usa /wcsdash")
 end

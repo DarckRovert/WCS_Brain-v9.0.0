@@ -1,10 +1,10 @@
 -- WCS_BrainTutorialButton.lua
 -- Boton flotante para acceder al tutorial rapidamente
--- Version 8.0.0
+-- Version: 6.5.0
 -- Compatible con Lua 5.0 (WoW 1.12)
 
 WCS_BrainTutorialButton = {
-    VERSION = "8.0.0",
+    VERSION = "6.5.0",
     button = nil,
     isShowing = false
 }
@@ -55,12 +55,13 @@ function WCS_BrainTutorialButton:CreateButton()
     local border = button:CreateTexture(nil, "OVERLAY")
     border:SetAllPoints(button)
     border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+    border:SetVertexColor(0.58, 0.51, 0.79, 1) -- COLOR_PURPLE
     button.border = border
     
     -- Tooltip
     button:SetScript("OnEnter", function()
         GameTooltip:SetOwner(this, "ANCHOR_RIGHT")
-        GameTooltip:SetText("Tutorial WCS Brain", 1, 1, 1)
+        GameTooltip:SetText("Tutorial WCS Brain", 1, 0.82, 0) -- Dorado
         GameTooltip:AddLine("Click: Abrir tutorial", 0.7, 0.7, 0.7)
         GameTooltip:AddLine("Shift+Click: Reiniciar tutorial", 0.7, 0.7, 0.7)
         GameTooltip:AddLine("Arrastra para mover", 0.5, 0.5, 0.5)

@@ -1,11 +1,11 @@
 --[[
     WCS_BrainDQN.lua - Deep Q-Network para Warlock
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Sin mensajes DEBUG
+    Version: 6.7.0 - Sin mensajes DEBUG
 ]]--
 
 WCS_BrainDQN = WCS_BrainDQN or {}
-WCS_BrainDQN.VERSION = "8.0.0"
+WCS_BrainDQN.VERSION = "6.7.0"
 WCS_BrainDQN.enabled = false
 
 WCS_BrainDQN.Config = WCS_BrainDQN.Config or {}

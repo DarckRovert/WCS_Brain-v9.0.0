@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainAchievements.lua - Sistema de Logros v8.0.0
+    WCS_BrainAchievements.lua - Sistema de Logros v6.5.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Gamificación del aprendizaje del Brain
@@ -8,7 +8,7 @@
 ]]--
 
 WCS_BrainAchievements = WCS_BrainAchievements or {}
-WCS_BrainAchievements.VERSION = "8.0.0"
+WCS_BrainAchievements.VERSION = "6.5.0"
 
 -- ============================================================================
 -- DEFINICIÓN DE LOGROS

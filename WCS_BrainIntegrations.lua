@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainIntegrations.lua - Sistema de Integración con Addons v8.0.0
+    WCS_BrainIntegrations.lua - Sistema de Integración con Addons v6.4.2
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Integración con addons populares:
@@ -11,7 +11,7 @@
 ]]--
 
 WCS_BrainIntegrations = WCS_BrainIntegrations or {}
-WCS_BrainIntegrations.VERSION = "8.0.0"
+WCS_BrainIntegrations.VERSION = "6.4.2"
 WCS_BrainIntegrations.enabled = true
 
 -- ============================================================================

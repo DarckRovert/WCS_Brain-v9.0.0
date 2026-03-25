@@ -9,14 +9,72 @@ local panel = nil
 local selectedSpell = nil
 local selectedSpec = "Affliction"
 
--- Clasificación de hechizos dinámica mediante GetSpellTabInfo en tiempo real
+-- Clasificación de hechizos por escuela (para filtrado)
+local SPELL_SCHOOLS = {
+    -- Affliction
+    ["Corruption"] = "Affliction",
+    ["Curse of Agony"] = "Affliction",
+    ["Curse of Doom"] = "Affliction",
+    ["Curse of Weakness"] = "Affliction",
+    ["Curse of Recklessness"] = "Affliction",
+    ["Curse of the Elements"] = "Affliction",
+    ["Curse of Shadow"] = "Affliction",
+    ["Curse of Tongues"] = "Affliction",
+    ["Curse of Exhaustion"] = "Affliction",
+    ["Siphon Life"] = "Affliction",
+    ["Drain Life"] = "Affliction",
+    ["Drain Soul"] = "Affliction",
+    ["Drain Mana"] = "Affliction",
+    ["Life Tap"] = "Affliction",
+    ["Dark Pact"] = "Affliction",
+    
+    -- Destruction
+    ["Shadow Bolt"] = "Destruction",
+    ["Immolate"] = "Destruction",
+    ["Incinerate"] = "Destruction",
+    ["Searing Pain"] = "Destruction",
+    ["Soul Fire"] = "Destruction",
+    ["Conflagrate"] = "Destruction",
+    ["Shadowburn"] = "Destruction",
+    ["Hellfire"] = "Destruction",
+    ["Rain of Fire"] = "Destruction",
+    ["Death Coil"] = "Destruction",
+    
+    -- Demonology
+    ["Summon Imp"] = "Demonology",
+    ["Summon Voidwalker"] = "Demonology",
+    ["Summon Succubus"] = "Demonology",
+    ["Summon Felhunter"] = "Demonology",
+    ["Demon Skin"] = "Demonology",
+    ["Demon Armor"] = "Demonology",
+    ["Fel Armor"] = "Demonology",
+    ["Demonic Sacrifice"] = "Demonology",
+    ["Soul Link"] = "Demonology",
+    ["Fel Domination"] = "Demonology",
+    ["Health Funnel"] = "Demonology",
+    ["Enslave Demon"] = "Demonology",
+    
+    -- Utility
+    ["Fear"] = "Utility",
+    ["Howl of Terror"] = "Utility",
+    ["Banish"] = "Utility",
+    ["Detect Invisibility"] = "Utility",
+    ["Unending Breath"] = "Utility",
+    ["Amplify Curse"] = "Utility",
+    ["Shadowfury"] = "Utility",
+    ["Create Healthstone"] = "Utility",
+    ["Create Soulstone"] = "Utility",
+    ["Create Firestone"] = "Utility",
+    ["Create Spellstone"] = "Utility",
+    ["Ritual of Summoning"] = "Utility",
+    ["Eye of Kilrogg"] = "Utility",
+    ["Sense Demons"] = "Utility",
+}
 
 -- Función para escanear el spellbook del jugador
 function WCS_Grimoire:ScanPlayerSpells()
     local spells = {}
     local i = 1
-    local numTabs = GetNumSpellTabs()
-    
     while true do
         local spellName, spellRank = GetSpellName(i, BOOKTYPE_SPELL)
         if not spellName then
@@ -34,20 +92,11 @@ function WCS_Grimoire:ScanPlayerSpells()
             end
         end
         
-        -- Obtener la escuela determinando el tab del libro
-        local school = "Other"
-        if numTabs then
-            for t = 1, numTabs do
-                local tabName, _, offset, numSpells = GetSpellTabInfo(t)
-                if tabName and i > offset and i <= (offset + numSpells) then
-                    school = tabName
-                    break
-                end
-            end
-        end
-        
         -- Obtener información del hechizo
         local spellTexture = GetSpellTexture(i, BOOKTYPE_SPELL)
+        
+        -- Clasificar por escuela
+        local school = SPELL_SCHOOLS[baseName] or "Other"
         
         -- Verificar si ya tenemos este hechizo
         local existing = spells[baseName]
@@ -74,7 +123,30 @@ function WCS_Grimoire:ScanPlayerSpells()
     return spellArray
 end
 
--- ROTATIONS eliminadas por estaticidad, se manejan live desde WCS_DecisionEngine
+-- Rotaciones recomendadas
+local ROTATIONS = {
+    Affliction = {
+        "1. Curse of Agony/Doom",
+        "2. Corruption",
+        "3. Siphon Life (if talented)",
+        "4. Shadow Bolt spam",
+        "5. Drain Soul at <25% HP"
+    },
+    Destruction = {
+        "1. Immolate",
+        "2. Curse of Doom/Elements",
+        "3. Conflagrate (if talented)",
+        "4. Shadow Bolt spam",
+        "5. Soul Fire with Soul Shard"
+    },
+    Demonology = {
+        "1. Curse of Agony",
+        "2. Corruption",
+        "3. Shadow Bolt spam",
+        "4. Pet management",
+        "5. Soul Link uptime"
+    }
+}
 
 function WCS_Grimoire:Initialize()
     if panel then return end
@@ -89,24 +161,9 @@ function WCS_Grimoire:Initialize()
     title:SetText("|cff9370DBGrimorio Oscuro|r")
     title:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
     
-    -- Botones de especialización dinámicos según GetSpellTabInfo
+    -- Botones de especialización
     local specButtons = {}
-    local numTabs = GetNumSpellTabs()
-    local specs = {}
-    
-    if numTabs and numTabs > 1 then
-        for i = 2, numTabs do
-            local name = GetSpellTabInfo(i)
-            if name then table.insert(specs, name) end
-        end
-    else
-        specs = {"Affliction", "Destruction", "Demonology"}
-    end
-    
-    if table.getn(specs) > 0 then
-        selectedSpec = specs[1]
-    end
-
+    local specs = {"Affliction", "Destruction", "Demonology"}
     for i = 1, table.getn(specs) do
         local spec = specs[i]
         local btn = CreateFrame("Button", nil, panel)
@@ -259,11 +316,7 @@ function WCS_Grimoire:UpdateSpellList()
         end
         
         btn.spell = spell
-        local rankText = ""
-        if spell.rank and spell.rank > 0 then
-            rankText = " (Rank " .. spell.rank .. ")"
-        end
-        btn.text:SetText(string.format("|cff9370DB%s|r%s", spell.name, rankText))
+        btn.text:SetText(string.format("|cff9370DB%s|r (Rank %d)", spell.name, spell.rank))
         
         btn:SetScript("OnClick", function()
             selectedSpell = this.spell
@@ -313,20 +366,14 @@ function WCS_Grimoire:UpdateSpellDetails()
 end
 
 function WCS_Grimoire:UpdateRotation()
-    local text = "|cff00ff00Rotación Táctica Predictiva:|r\n"
+    local rotation = ROTATIONS[selectedSpec]
+    if not rotation then return end
     
-    if WCS and WCS.ClassRotations and WCS.ClassRotations.GetRotation then
-        local rotation = WCS.ClassRotations:GetRotation()
-        if rotation and table.getn(rotation) > 0 then
-            for i = 1, table.getn(rotation) do
-                text = text .. string.format("%d. %s\n", i, rotation[i])
-            end
-        else
-            text = text .. "No hay rotación definida para esta clase."
-        end
-    else
-        text = text .. "Motor WCS_DecisionEngine activo."
+    local text = ""
+    for i = 1, table.getn(rotation) do
+        text = text .. rotation[i] .. "\n"
     end
+    
     self.rotationText:SetText(text)
 end
 
@@ -338,29 +385,5 @@ function WCS_Grimoire:Hide()
     if self.panel then self.panel:Hide() end
 end
 
--- ============================================================================
--- MULTI-CLASS ROTATION ROUTING
--- GetBestRotation() returns the priority rotation for the current player class.
--- If WCS.ClassEngine is loaded, it uses it; otherwise falls back to the
--- hardcoded Warlock rotation for backward compatibility.
--- ============================================================================
-function WCS_Grimoire:GetBestRotation()
-    -- Route through ClassEngine if available (multi-class support)
-    if WCS and WCS.ClassEngine and WCS.ClassEngine.GetRotation then
-        return WCS.ClassEngine:GetRotation()
-    end
-
-    -- Warlock fallback (pre-ClassEngine compatibility)
-    local spec = selectedSpec or "Affliction"
-    if spec == "Affliction" then
-        return { "Curse of Agony", "Corruption", "Siphon Life", "Shadow Bolt" }
-    elseif spec == "Destruction" then
-        return { "Immolate", "Curse of Doom", "Conflagrate", "Shadow Bolt" }
-    else -- Demonology
-        return { "Curse of Agony", "Corruption", "Shadow Bolt" }
-    end
-end
-
--- Expose under WCS namespace so WCS_Core and DecisionEngine can find it
 _G["WCS_Grimoire"] = WCS_Grimoire
-if WCS then WCS.Grimoire = WCS_Grimoire end
+

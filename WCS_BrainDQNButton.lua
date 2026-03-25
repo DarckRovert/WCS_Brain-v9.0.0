@@ -15,9 +15,10 @@ local UPDATE_INTERVAL = 0.05  -- Throttling: 20 FPS en lugar de 60 FPS
 local SAVE_INTERVAL = 5
 
 -- Colores
-local COLOR_CYAN = {r=0, g=0.8, b=1}
-local COLOR_GREEN = {r=0, g=1, b=0}
-local COLOR_RED = {r=1, g=0, b=0}
+local COLOR_PURPLE = {r=0.58, g=0.51, b=0.79}
+local COLOR_FEL = {r=0.0, g=1.0, b=0.5}
+local COLOR_GOLD = {r=1.0, g=0.82, b=0.0}
+local COLOR_RED = {r=1, g=0.2, b=0.2}
 
 -- Configuracion por defecto
 local defaultConfig = {
@@ -72,14 +73,15 @@ function WCS_BrainDQNButton:CreateButton()
     border:SetHeight(72)
     border:SetPoint("CENTER", button, "CENTER", 0, 0)
     border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-    border:SetVertexColor(COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b, 0.8)
+    border:SetVertexColor(COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b, 0.8)
     button.border = border
     
     -- Texto de estado
     local statusText = button:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     statusText:SetPoint("BOTTOM", button, "BOTTOM", 0, -15)
-    statusText:SetText("DQN")
-    statusText:SetTextColor(COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+    statusText:SetText("CONEXION")
+    statusText:SetTextColor(COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
+    statusText:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
     button.statusText = statusText
     
     -- Restaurar posicion guardada
@@ -113,9 +115,9 @@ function WCS_BrainDQNButton:CreateButton()
     -- Script de click
     button:SetScript("OnClick", function()
         if arg1 == "LeftButton" then
-            -- Click izquierdo: Abrir interfaz
-            if WCS_BrainDQNUI then
-                WCS_BrainDQNUI:Toggle()
+            -- Click izquierdo: Abrir pestaña técnica en WCS_BrainUI
+            if WCS_BrainUI and WCS_BrainUI.SelectTabByName then
+                WCS_BrainUI:SelectTabByName("DQN")
             end
         elseif arg1 == "RightButton" then
             -- Click derecho: Menu de opciones
@@ -149,12 +151,12 @@ function WCS_BrainDQNButton:CreateButton()
         if WCS_BrainDQN and WCS_BrainDQN.enabled then
             local alpha = 0.5 + 0.5 * math.sin(pulseTimer * PULSE_SPEED)
             button.border:SetAlpha(alpha)
-            button.border:SetVertexColor(COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b, alpha)
-            button.statusText:SetTextColor(COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b)
+            button.border:SetVertexColor(COLOR_FEL.r, COLOR_FEL.g, COLOR_FEL.b, alpha)
+            button.statusText:SetTextColor(COLOR_FEL.r, COLOR_FEL.g, COLOR_FEL.b)
         else
             button.border:SetAlpha(0.3)
-            button.border:SetVertexColor(COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b, 0.3)
-            button.statusText:SetTextColor(COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+            button.border:SetVertexColor(COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b, 0.3)
+            button.statusText:SetTextColor(COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
         end
         
         -- Auto-guardar posicion cada 5 segundos
@@ -191,30 +193,31 @@ function WCS_BrainDQNButton:ShowTooltip()
     
     GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
     GameTooltip:ClearLines()
-    GameTooltip:AddLine("WCS Brain - DQN System", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+    GameTooltip:AddLine("WCS Brain - DQN Node", COLOR_FEL.r, COLOR_FEL.g, COLOR_FEL.b)
+    GameTooltip:AddLine("|cFFAAAAAASistema Deep Q-Learning v9.0|r", 1, 1, 1)
     GameTooltip:AddLine(" ")
     
     if WCS_BrainDQN then
         if WCS_BrainDQN.enabled then
-            GameTooltip:AddLine("Estado: ACTIVO", COLOR_GREEN.r, COLOR_GREEN.g, COLOR_GREEN.b)
+            GameTooltip:AddLine("RED NEURONAL: |cFF00FF00ACTIVA|r", 1, 1, 1)
         else
-            GameTooltip:AddLine("Estado: INACTIVO", COLOR_RED.r, COLOR_RED.g, COLOR_RED.b)
+            GameTooltip:AddLine("RED NEURONAL: |cFFFF4444INACTIVA|r", 1, 1, 1)
         end
         
         if WCS_BrainDQN.Stats then
             GameTooltip:AddLine(" ")
-            GameTooltip:AddLine(string.format("Episodios: %d", WCS_BrainDQN.Stats.episodes or 0), 1, 1, 1)
-            GameTooltip:AddLine(string.format("Recompensa: %.2f", WCS_BrainDQN.Stats.totalReward or 0), 1, 1, 1)
-            GameTooltip:AddLine(string.format("Epsilon: %.2f", WCS_BrainDQN.Config.epsilon or 1), 1, 1, 1)
+            GameTooltip:AddLine(string.format("Episodios: |cFFFFCC00%d|r", WCS_BrainDQN.Stats.episodes or 0), 0.8, 0.8, 0.8)
+            GameTooltip:AddLine(string.format("Recompensa: |cFF00FF80%.2f|r", WCS_BrainDQN.Stats.totalReward or 0), 0.8, 0.8, 0.8)
+            GameTooltip:AddLine(string.format("Epsilon: |cFF9482C9%.4f|r", WCS_BrainDQN.Config.epsilon or 1), 0.8, 0.8, 0.8)
         end
     else
         GameTooltip:AddLine("Sistema no disponible", COLOR_RED.r, COLOR_RED.g, COLOR_RED.b)
     end
     
     GameTooltip:AddLine(" ")
-    GameTooltip:AddLine("Click Izquierdo: Abrir interfaz", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Click Derecho: Menu de opciones", 0.7, 0.7, 0.7)
-    GameTooltip:AddLine("Arrastrar: Mover boton", 0.7, 0.7, 0.7)
+    GameTooltip:AddLine("|cFFFFD700Click Izquierdo:|r Abrir Matriz DQN", 1, 1, 1)
+    GameTooltip:AddLine("|cFFFFD700Click Derecho:|r Menu de Red", 1, 1, 1)
+    GameTooltip:AddLine("|cFF888888Arrastrar para mover|r", 1, 1, 1)
     
     GameTooltip:Show()
 end
@@ -252,8 +255,8 @@ function WCS_BrainDQNButton:ShowMenu()
         table.insert(menu, {
             text = "Abrir Interfaz",
             func = function()
-                if WCS_BrainDQNUI then
-                    WCS_BrainDQNUI:Show()
+                if WCS_BrainUI and WCS_BrainUI.SelectTabByName then
+                    WCS_BrainUI:SelectTabByName("DQN")
                 end
             end
         })
@@ -272,7 +275,7 @@ function WCS_BrainDQNButton:ShowMenu()
             func = function()
                 if WCS_BrainDQN.SaveNetwork then
                     WCS_BrainDQN:SaveNetwork()
-                    DEFAULT_CHAT_FRAME:AddMessage("DQN: Red neuronal guardada", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+                    DEFAULT_CHAT_FRAME:AddMessage("DQN: Red neuronal guardada", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
                 end
             end
         })
@@ -282,7 +285,7 @@ function WCS_BrainDQNButton:ShowMenu()
             func = function()
                 if WCS_BrainDQN.ResetNetwork then
                     WCS_BrainDQN:ResetNetwork()
-                    DEFAULT_CHAT_FRAME:AddMessage("DQN: Red neuronal reseteada", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+                    DEFAULT_CHAT_FRAME:AddMessage("DQN: Red neuronal reseteada", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
                 end
             end
         })
@@ -348,10 +351,10 @@ SLASH_DQNBUTTON1 = "/dqnbutton"
 SlashCmdList["DQNBUTTON"] = function(msg)
     if msg == "show" then
         WCS_BrainDQNButton:Show()
-        DEFAULT_CHAT_FRAME:AddMessage("DQN: Boton mostrado", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+        DEFAULT_CHAT_FRAME:AddMessage("DQN: Boton mostrado", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
     elseif msg == "hide" then
         WCS_BrainDQNButton:Hide()
-        DEFAULT_CHAT_FRAME:AddMessage("DQN: Boton ocultado", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+        DEFAULT_CHAT_FRAME:AddMessage("DQN: Boton ocultado", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
     elseif msg == "toggle" then
         WCS_BrainDQNButton:Toggle()
     elseif msg == "reset" then
@@ -365,9 +368,9 @@ SlashCmdList["DQNBUTTON"] = function(msg)
             button:ClearAllPoints()
             button:SetPoint("CENTER", UIParent, "CENTER", 0, -200)
         end
-        DEFAULT_CHAT_FRAME:AddMessage("DQN: Posicion del boton reseteada", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+        DEFAULT_CHAT_FRAME:AddMessage("DQN: Posicion del boton reseteada", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
     else
-        DEFAULT_CHAT_FRAME:AddMessage("Comandos del boton DQN:", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+        DEFAULT_CHAT_FRAME:AddMessage("Comandos del boton DQN:", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
         DEFAULT_CHAT_FRAME:AddMessage("  /dqnbutton show - Mostrar boton", 1, 1, 1)
         DEFAULT_CHAT_FRAME:AddMessage("  /dqnbutton hide - Ocultar boton", 1, 1, 1)
         DEFAULT_CHAT_FRAME:AddMessage("  /dqnbutton toggle - Alternar visibilidad", 1, 1, 1)
@@ -390,7 +393,7 @@ end
 -- Inicializacion automatica
 local function Initialize()
     WCS_BrainDQNButton:CreateButton()
-    DEFAULT_CHAT_FRAME:AddMessage("WCS_BrainDQNButton cargado. Usa /dqnbutton para opciones.", COLOR_CYAN.r, COLOR_CYAN.g, COLOR_CYAN.b)
+    DEFAULT_CHAT_FRAME:AddMessage("WCS_BrainDQNButton cargado. Usa /dqnbutton para opciones.", COLOR_PURPLE.r, COLOR_PURPLE.g, COLOR_PURPLE.b)
 end
 
 -- Registrar evento de carga

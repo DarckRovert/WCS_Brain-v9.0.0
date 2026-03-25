@@ -1,5 +1,5 @@
 --[[
-WCS_BrainMajorDemons.lua v8.0.0
+WCS_BrainMajorDemons.lua v6.5.0
 Sistema de Deteccion y Manejo de Demonios Mayores (Infernal y Doomguard)
 
 Compatible con Lua 5.0 (Turtle WoW / WoW 1.12)
@@ -8,13 +8,13 @@ Este modulo extiende WCS_BrainPetAI con soporte mejorado para:
 - Infernal: Invocado con Inferno, dura 5 minutos
 - Doomguard: Invocado con Ritual of Doom
 
-v8.0.0: Alertas visuales mejoradas (60s, 30s, 15s)
+v6.5.0: Alertas visuales mejoradas (60s, 30s, 15s)
 ]]
 
 WCS_BrainMajorDemons = WCS_BrainMajorDemons or {}
 local MajorDemons = WCS_BrainMajorDemons
 
-MajorDemons.VERSION = "8.0.0"
+MajorDemons.VERSION = "6.5.0"
 MajorDemons.debug = false
 
 -- Estado de tracking

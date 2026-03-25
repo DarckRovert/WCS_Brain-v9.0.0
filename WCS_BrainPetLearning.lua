@@ -1,5 +1,5 @@
 -- ============================================================================
--- WCS_BrainPetLearning.lua v8.0.0
+-- WCS_BrainPetLearning.lua v6.4.2
 -- Sistema de Aprendizaje Mejorado para Mascota
 -- Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
 -- ============================================================================
@@ -691,5 +691,5 @@ end
 -- ============================================================================
 -- INICIALIZACION
 -- ============================================================================
-DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS]|r PetLearning v8.0.0 cargado - /petlearn para comandos")
+DEFAULT_CHAT_FRAME:AddMessage("|cff9370DB[WCS]|r PetLearning v6.3.4 cargado - /petlearn para comandos")
 

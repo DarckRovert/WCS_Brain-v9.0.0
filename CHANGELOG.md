@@ -1,5 +1,44 @@
 # Changelog - WCS_Brain
 
+## [8.3.7-RESTORED] - Marzo 24, 2026
+### FIXED
+- **RESTAURACIÓN TOTAL**: Se ha recuperado el núcleo de IA de mascotas original del respaldo funcional de F:\ (72KB).
+- **Paridad Bit-a-Bit**: Sincronización exacta de `WCS_BrainPetAI.lua`, `WCS_Helpers.lua`, `WCS_EventManager.lua`, `WCS_ResourceManager.lua`, `WCS_SpellDB.lua` y `WCS_SpellLocalization.lua`.
+- **Ecosistema Recuperado**: Re-activados los 12 módulos de mascotas en el `.toc` para permitir coordinación avanzada y modo Guardián.
+- **Sin Errores de Carga**: El archivo `WCS_BrainPetAI.lua` ahora tiene sus 1970 líneas originales, garantizando que todas las estrategias tácticas estén presentes.
+- **UI Stable**: Corregido error `Log (a nil value)` en `WCS_BrainUI.lua:912` que bloqueaba el inicio del addon.
+
+
+## [8.3.5] - Marzo 24, 2026
+### Fixed
+- **Localización Universal**: Corregido el motor de detección de mascotas para clientes en Español (Diablillo, Abisario, etc).
+- **Firmas de Habilidad**: Las mascotas ahora se identifican por sus habilidades (Escudo de Fuego, Sacrificio) en lugar de nombres localizados.
+
+## [8.3.4] - Marzo 24, 2026
+### Fixed
+- **Tolerancia Cero**: Sincronizada la lógica del Felhunter con el rastreador de casteo enemigo (`EnemyCastingTable`).
+- **Robustez**: Añadidos nil-guards adicionales en el motor de eventos de hechizos.
+
+## [8.3.3] - Marzo 24, 2026
+### Fixed
+- **MASTER FUSION**: Integrada la lógica táctica de `GuardianEnhanced` (CC, Taunt, Intercept) con el motor `Ghost-Cast`.
+- **Reflejos Restaurados**: Recuperadas las funciones de protección de aliados que se perdieron en la v8.3.2.
+- **Detección Dinámica**: Mejora en la identificación de tipos de mascotas (incluyendo Demonios Mayores localizados).
+
+## [8.3.2] - Marzo 24, 2026
+### Fixed
+- **Consolidación de Arquitectura**: Desactivados 12 módulos de mascotas redundantes que causaban colisiones de órdenes.
+- **Autoridad Única**: El PetAI v8.3.2 es ahora el único motor de decisiones, asegurando autonomía total.
+
+## [8.3.1] - Marzo 24, 2026
+
+## [8.3.0] - Marzo 24, 2026
+### 🛠️ BUG-FIXING & OPTIMIZACIÓN (v8.3.0)
+- **Imp Raid Support**: Restaurada la funcionalidad de Fire Shield masivo para 5, 10 y 40 personas.
+- **Infernal Fixed**: Eliminado el spam de chat del Infernal y corregida la detección de su Aura de Inmolación en Turtle WoW.
+- **Silent Execution**: Las habilidades de soporte ahora se ejecutan de forma invisible (Ghost-Cast) sin usar el chat y con restauración instantánea del target.
+- **Link Corregido**: Reparada la delegación de mando en `WCS_PetManager.lua` para evitar conflictos entre motores.
+
 Todas las versiones notables de este proyecto serán documentadas en este archivo.
 
 ---

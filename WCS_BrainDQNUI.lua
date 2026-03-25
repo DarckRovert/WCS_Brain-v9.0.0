@@ -9,7 +9,7 @@
 ]]--
 
 WCS_BrainDQNUI = WCS_BrainDQNUI or {}
-WCS_BrainDQNUI.VERSION = "8.0.0"
+WCS_BrainDQNUI.VERSION = "6.4.2"
 
 -- ============================================================================
 -- COLORES WARLOCK (consistente con WCS_BrainUI)
@@ -26,9 +26,9 @@ local COLORS = {
     WARNING = {1.0, 0.7, 0.0},
     
     -- UI
-    BG_DARK = {0.04, 0.02, 0.08},
-    BG_SECTION = {0.08, 0.05, 0.14},
-    BORDER = {0.58, 0.51, 0.79},
+    BG_DARK = {0.08, 0.06, 0.12},
+    BG_SECTION = {0.12, 0.10, 0.18},
+    BORDER = {0.5, 0.4, 0.7},
     TEXT_DIM = {0.6, 0.6, 0.6},
     TEXT_BRIGHT = {1.0, 1.0, 1.0},
     GOLD = {1.0, 0.82, 0.0},
@@ -92,15 +92,11 @@ function WCS_BrainDQNUI:CreateMainFrame()
     
     -- Frame principal
     mainFrame = CreateFrame("Frame", "WCS_BrainDQNMainFrame", UIParent)
-    mainFrame:SetWidth(320)
-    mainFrame:SetHeight(480)
-    mainFrame:SetPoint("CENTER", UIParent, "CENTER", -350, 0)
-    mainFrame:SetMovable(true)
-    mainFrame:EnableMouse(true)
-    mainFrame:RegisterForDrag("LeftButton")
-    mainFrame:SetScript("OnDragStart", function() this:StartMoving() end)
-    mainFrame:SetScript("OnDragStop", function() this:StopMovingOrSizing() end)
+    mainFrame:SetWidth(680)
+    mainFrame:SetHeight(540)
+    mainFrame:SetMovable(false)
     mainFrame:SetFrameStrata("MEDIUM")
+    WCS_BrainDQNUI.MainFrame = mainFrame
     
     -- Fondo principal oscuro
     mainFrame:SetBackdrop({
@@ -447,24 +443,32 @@ end
 -- TOGGLE Y SHOW
 -- ============================================================================
 function WCS_BrainDQNUI:Toggle()
-    if not mainFrame then
-        self:CreateMainFrame()
+    if WCS_BrainUI and WCS_BrainUI.MainFrame and WCS_BrainUI.MainFrame:IsVisible() and WCS_BrainUI.tabDataList and WCS_BrainUI.MainFrame.currentTab then
+        if WCS_BrainUI.tabDataList[WCS_BrainUI.MainFrame.currentTab].name == "DQN" then
+            WCS_BrainUI:Toggle()
+            return
+        end
     end
     
-    if mainFrame:IsVisible() then
-        mainFrame:Hide()
+    if mainFrame and mainFrame:IsVisible() and (not WCS_BrainUI or not WCS_BrainUI.MainFrame or not WCS_BrainUI.MainFrame:IsVisible()) then
+        self:Hide()
     else
-        mainFrame:Show()
-        self:UpdateUI()
+        self:Show()
     end
 end
 
 function WCS_BrainDQNUI:Show()
-    if not mainFrame then
-        self:CreateMainFrame()
+    if WCS_BrainUI and WCS_BrainUI.SelectTabByName then
+        WCS_BrainUI:SelectTabByName("DQN")
+        if not mainFrame then self:CreateMainFrame() end
+        self:UpdateUI()
+    else
+        if not mainFrame then
+            self:CreateMainFrame()
+        end
+        mainFrame:Show()
+        self:UpdateUI()
     end
-    mainFrame:Show()
-    self:UpdateUI()
 end
 
 function WCS_BrainDQNUI:Hide()

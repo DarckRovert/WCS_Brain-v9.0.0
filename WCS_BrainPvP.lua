@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainPvP.lua - Modo PvP Inteligente v8.0.0
+    WCS_BrainPvP.lua - Modo PvP Inteligente v6.6.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Detección y adaptación automática a PvP
@@ -8,7 +8,7 @@
 ]]--
 
 WCS_BrainPvP = WCS_BrainPvP or {}
-WCS_BrainPvP.VERSION = "8.0.0"
+WCS_BrainPvP.VERSION = "6.6.0"
 WCS_BrainPvP.enabled = false
 WCS_BrainPvP.inPvP = false
 

@@ -34,7 +34,7 @@
 
 -- Helpers for Lua 5.0 compatibility and small utilities
 WCS_Helpers = WCS_Helpers or {}
-WCS_Helpers.VERSION = "8.0.0"
+WCS_Helpers.VERSION = "6.6.0"
 
 function WCS_Helpers.TableCount(t)
     if not t then return 0 end

@@ -1,14 +1,14 @@
 --[[
     WCS_BrainActions.lua - Definicion de Acciones del DQN
     Compatible con Lua 5.0 (Turtle WoW)
-    Version 8.0.0
+    Version: 6.4.2
     
     Total: 30 acciones (29 hechizos + WAIT)
     NO incluye acciones de mascota (manejadas por WCS_BrainPetAI)
 ]]--
 
 WCS_BrainActions = WCS_BrainActions or {}
-WCS_BrainActions.VERSION = "8.0.0"
+WCS_BrainActions.VERSION = "6.4.2"
 WCS_BrainActions.ACTION_SIZE = 30
 
 -- Mapeo de acciones (indice -> nombre)

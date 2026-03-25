@@ -1,10 +1,10 @@
 -- WCS_BrainThinkingUI.lua
 -- UI que muestra el "pensamiento" del Brain en tiempo real
--- Version 8.0.0
+-- Version: 6.5.0
 -- Author: Elnazzareno (DarckRovert)
 
 WCS_BrainThinkingUI = {
-    VERSION = "8.0.0",
+    VERSION = "6.5.0",
     
     -- Configuracion
     Config = {
@@ -61,15 +61,14 @@ function TUI:CreateFrame()
     frame:SetHeight(self.Config.height)
     frame:SetPoint("CENTER", self.Data.position.x, self.Data.position.y)
     frame:SetBackdrop({
-        bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
         tile = true,
-        tileSize = 16,
-        edgeSize = 16,
-        insets = { left = 4, right = 4, top = 4, bottom = 4 },
+        tileSize = 32,
+        edgeSize = 32,
+        insets = { left = 11, right = 12, top = 12, bottom = 11 },
     })
-    frame:SetBackdropColor(0.04, 0.02, 0.08, 0.95)
-    frame:SetBackdropBorderColor(0.58, 0.51, 0.79, 1)
+    frame:SetBackdropColor(0, 0, 0, 0.9)
     frame:EnableMouse(true)
     frame:SetMovable(true)
     frame:RegisterForDrag("LeftButton")

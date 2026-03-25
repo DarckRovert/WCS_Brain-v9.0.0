@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainCache.lua - Sistema de Cache y Optimización v8.0.0
+    WCS_BrainCache.lua - Sistema de Cache y Optimización v6.6.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Sistema de cache para optimizar llamadas costosas
@@ -10,7 +10,7 @@
 ]]--
 
 WCS_BrainCache = WCS_BrainCache or {}
-WCS_BrainCache.VERSION = "8.0.0"
+WCS_BrainCache.VERSION = "6.6.0"
 
 -- ============================================================================
 -- CONFIGURACIÓN

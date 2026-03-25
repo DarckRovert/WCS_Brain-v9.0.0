@@ -117,7 +117,7 @@ function WCS_RaidManager:Initialize()
     local healthBg = CreateFrame("Frame", nil, panel)
     healthBg:SetPoint("TOPRIGHT", -10, -280)
     healthBg:SetWidth(400)
-    healthBg:SetHeight(120)
+    healthBg:SetHeight(245)
     local healthBgTex = healthBg:CreateTexture(nil, "BACKGROUND")
     healthBgTex:SetAllPoints()
     healthBgTex:SetTexture(0, 0, 0, 0.5)
@@ -145,82 +145,6 @@ function WCS_RaidManager:Initialize()
     distributeBtn:SetScript("OnClick", function()
         WCS_RaidManager:DistributeHealthstones()
     end)
-    
-    -- Panel de Utilidades y Macros (derecha muy abajo)
-    local macroBg = CreateFrame("Frame", nil, panel)
-    macroBg:SetPoint("TOPRIGHT", -10, -405)
-    macroBg:SetWidth(400)
-    macroBg:SetHeight(120)
-    local macroBgTex = macroBg:CreateTexture(nil, "BACKGROUND")
-    macroBgTex:SetAllPoints()
-    macroBgTex:SetTexture(0, 0, 0, 0.5)
-    
-    local macroTitle = macroBg:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    macroTitle:SetPoint("TOP", 0, -5)
-    macroTitle:SetText("|cffFFD700Utilidades y Macros|r")
-    
-    local _, class = UnitClass("player")
-    if class == "WARLOCK" then
-        local autoCurseBtn = CreateFrame("Button", nil, macroBg)
-        autoCurseBtn:SetPoint("TOPLEFT", 10, -30)
-        autoCurseBtn:SetWidth(180)
-        autoCurseBtn:SetHeight(25)
-        local autoCurseBg = autoCurseBtn:CreateTexture(nil, "BACKGROUND")
-        autoCurseBg:SetAllPoints()
-        autoCurseBg:SetTexture(0.5, 0.1, 0.5, 0.8)
-        local autoCurseText = autoCurseBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        autoCurseText:SetPoint("CENTER", 0, 0)
-        autoCurseText:SetText("Auto Curses (Raid)")
-        autoCurseBtn:SetScript("OnClick", function()
-            WCS_RaidManager:AutoAssignCurses()
-        end)
-        
-        local createHsBtn = CreateFrame("Button", nil, macroBg)
-        createHsBtn:SetPoint("TOPRIGHT", -10, -30)
-        createHsBtn:SetWidth(180)
-        createHsBtn:SetHeight(25)
-        local createHsBg = createHsBtn:CreateTexture(nil, "BACKGROUND")
-        createHsBg:SetAllPoints()
-        createHsBg:SetTexture(0.2, 0.5, 0.2, 0.8)
-        local createHsText = createHsBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        createHsText:SetPoint("CENTER", 0, 0)
-        createHsText:SetText("Crear Macro HS")
-        createHsBtn:SetScript("OnClick", function()
-            WCS_RaidManager:CreateMacroHS()
-        end)
-        
-        local createSsBtn = CreateFrame("Button", nil, macroBg)
-        createSsBtn:SetPoint("BOTTOMLEFT", 10, 10)
-        createSsBtn:SetWidth(180)
-        createSsBtn:SetHeight(25)
-        local createSsBg = createSsBtn:CreateTexture(nil, "BACKGROUND")
-        createSsBg:SetAllPoints()
-        createSsBg:SetTexture(0.2, 0.5, 0.2, 0.8)
-        local createSsText = createSsBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        createSsText:SetPoint("CENTER", 0, 0)
-        createSsText:SetText("Crear Macro SS")
-        createSsBtn:SetScript("OnClick", function()
-            WCS_RaidManager:CreateMacroSS()
-        end)
-        
-        local createCurseBtn = CreateFrame("Button", nil, macroBg)
-        createCurseBtn:SetPoint("BOTTOMRIGHT", -10, 10)
-        createCurseBtn:SetWidth(180)
-        createCurseBtn:SetHeight(25)
-        local createCurseBg = createCurseBtn:CreateTexture(nil, "BACKGROUND")
-        createCurseBg:SetAllPoints()
-        createCurseBg:SetTexture(0.2, 0.5, 0.2, 0.8)
-        local createCurseText = createCurseBtn:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        createCurseText:SetPoint("CENTER", 0, 0)
-        createCurseText:SetText("Crear Macro Curse")
-        createCurseBtn:SetScript("OnClick", function()
-            WCS_RaidManager:CreateMacroCurse()
-        end)
-    else
-        local noWarlockText = macroBg:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-        noWarlockText:SetPoint("CENTER", 0, 0)
-        noWarlockText:SetText("Herramientas de clase no disponibles.")
-    end
     
     self.panel = panel
     
@@ -543,56 +467,6 @@ end
 
 function WCS_RaidManager:Hide()
     if self.panel then self.panel:Hide() end
-end
-
-function WCS_RaidManager:AutoAssignCurses()
-    local warlocks = {}
-    for i=1, table.getn(raidMembers) do
-        local m = raidMembers[i]
-        if m.class == "Warlock" then table.insert(warlocks, m.name) end
-    end
-    if table.getn(warlocks) == 0 then 
-        DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[Raid Manager]|r No hay Brujos en la banda.")
-        return 
-    end
-    
-    local curses = {"Curse of Elements", "Curse of Shadow", "Curse of Recklessness", "Curse of Agony"}
-    SendChatMessage("=== Auto Asignación de Maldiciones ===", "RAID")
-    for i=1, table.getn(warlocks) do
-        local c = curses[math.mod(i-1, table.getn(curses)) + 1]
-        SendChatMessage(warlocks[i] .. " -> " .. c, "RAID")
-    end
-end
-
-function WCS_RaidManager:SafeCreateMacro(name, icon, body)
-    local index = GetMacroIndexByName(name)
-    if index > 0 then
-        EditMacro(index, name, icon, body, 1)
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[Raid Manager]|r Macro " .. name .. " actualizada.")
-    else
-        local numAcc, numChar = GetNumMacros()
-        if numChar >= 18 then
-            DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[Raid Manager]|r No tienes espacio para macros de personaje (Límite 18).")
-        else
-            CreateMacro(name, icon, body, 1, 1)
-            DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[Raid Manager]|r Macro " .. name .. " creada.")
-        end
-    end
-end
-
-function WCS_RaidManager:CreateMacroHS()
-    local body = "/use Major Healthstone\n/use Greater Healthstone\n/use Healthstone\n/use Lesser Healthstone\n/use Minor Healthstone"
-    self:SafeCreateMacro("WCS_UseHS", 1, body) -- Icon parameter defaults in 1.12 to 1 if string not found
-end
-
-function WCS_RaidManager:CreateMacroSS()
-    local body = "/cast Major Soulstone\n/cast Greater Soulstone\n/cast Soulstone\n/cast Lesser Soulstone\n/cast Minor Soulstone"
-    self:SafeCreateMacro("WCS_CreateSS", 1, body)
-end
-
-function WCS_RaidManager:CreateMacroCurse()
-    local body = "/script if IsShiftKeyDown() then CastSpellByName(\"Curse of Shadow\") elseif IsControlKeyDown() then CastSpellByName(\"Curse of Elements\") elseif IsAltKeyDown() then CastSpellByName(\"Curse of Recklessness\") else CastSpellByName(\"Curse of Agony\") end"
-    self:SafeCreateMacro("WCS_SmartCurse", 1, body)
 end
 
 _G["WCS_RaidManager"] = WCS_RaidManager

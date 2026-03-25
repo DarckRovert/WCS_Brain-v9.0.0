@@ -1,6 +1,6 @@
 --[[
     WCS_BrainPetAICleanup.lua - Sistema de Limpieza de Cooldowns de Mascotas
-    Parte del addon WCS_Brain v8.0.0
+    Parte del addon WCS_Brain v6.8.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     FASE 2 - OPTIMIZACIÓN DE MEMORIA

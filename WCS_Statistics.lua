@@ -23,22 +23,6 @@ local combatStats = {
 function WCS_Statistics:Initialize()
     if panel then return end
     
-    -- Inicializar SavedVariable
-    if not WCS_StatisticsData then
-        WCS_StatisticsData = {
-            totalDamage = 0,
-            totalHealing = 0,
-            spellsCast = {},
-            combatTime = 0,
-            kills = 0,
-            deaths = 0,
-            sessionStart = time()
-        }
-    end
-    combatStats = WCS_StatisticsData
-    combatStats.inCombat = false
-    combatStats.lastCombatStart = 0
-    
     panel = CreateFrame("Frame", "WCS_StatisticsFrame", WCS_ClanUI.MainFrame.content)
     panel:SetAllPoints(WCS_ClanUI.MainFrame.content)
     panel:Hide()
@@ -206,39 +190,14 @@ function WCS_Statistics:OnEvent(event, arg1)
 end
 
 function WCS_Statistics:ParseDamage(msg)
-    if not msg then return end
-    
-    local damage, spell
-    
-    -- 1. Golpes normales (Melee/Wand)
-    -- "You hit Target for 50."
-    -- "Your Wand hits Target for 30."
-    local _, _, d = string.find(msg, "for (%d+)")
-    if d then damage = tonumber(d) end
-    
-    -- 2. Hechizos de daño directo / Críticos
-    -- "Your Shadow Bolt hits Target for 500."
-    -- "Your Shadow Bolt crits Target for 1000."
-    -- "Your Corruption suffers 50 damage..." (No, este es otro patron)
-    
-    local _, _, s = string.find(msg, "Your (.-) hits")
-    if not s then _, _, s = string.find(msg, "Your (.-) crits") end
-    if not s then _, _, s = string.find(msg, "Your (.-) misses") end -- Solo para trackear uso
-    
-    -- 3. Periódicos (DoTs)
-    -- "Target suffers 50 Shadow damage from your Corruption."
-    if not s then
-        local _, _, dmg, school, sp = string.find(msg, ".- suffers (%d+) (.-) damage from your (.-)%.")
-        if sp then
-            s = sp
-            damage = tonumber(dmg)
-        end
+    local _, _, damage = string.find(msg, "for (%d+)")
+    if damage then
+        combatStats.totalDamage = combatStats.totalDamage + tonumber(damage)
     end
     
-    spell = s
-    
-    if damage then
-        combatStats.totalDamage = combatStats.totalDamage + damage
+    local _, _, spell = string.find(msg, "Your (.-) hits")
+    if not spell then
+        _, _, spell = string.find(msg, "Your (.-) crits")
     end
     
     if spell then
@@ -247,7 +206,7 @@ function WCS_Statistics:ParseDamage(msg)
         end
         combatStats.spellsCast[spell].count = combatStats.spellsCast[spell].count + 1
         if damage then
-            combatStats.spellsCast[spell].damage = combatStats.spellsCast[spell].damage + damage
+            combatStats.spellsCast[spell].damage = combatStats.spellsCast[spell].damage + tonumber(damage)
         end
     end
 end

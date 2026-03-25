@@ -1,11 +1,11 @@
 --[[
     WCS_LazyLoader.lua - Sistema de Carga Diferida de Módulos
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Optimización de Rendimiento
+    Version: 6.4.2 - Optimización de Rendimiento
 ]]--
 
 WCS_LazyLoader = WCS_LazyLoader or {}
-WCS_LazyLoader.VERSION = "8.0.0"
+WCS_LazyLoader.VERSION = "6.4.2"
 
 -- ============================================================================
 -- FUNCIONES AUXILIARES COMPATIBLES CON LUA 5.0

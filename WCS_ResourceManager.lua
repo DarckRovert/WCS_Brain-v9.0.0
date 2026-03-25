@@ -1,5 +1,5 @@
 --[[
-    WCS_ResourceManager.lua - Gestor de Recursos Centralizado (v8.0)
+    WCS_ResourceManager.lua - Gestor de Recursos Centralizado (v7.0)
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Centraliza el rastreo de items importantes (Soul Shards, Healthstones, etc.)

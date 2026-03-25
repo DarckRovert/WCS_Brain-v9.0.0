@@ -291,10 +291,6 @@ end
 
 -- Verificar Soul Shards
 function WarlockNotif:CheckSoulShards()
-    -- Evitar falsos positivos al loguear (dar tiempo a cargar bolsas)
-    if not self.safetyTimer then self.safetyTimer = GetTime() end
-    if GetTime() - self.safetyTimer < 10 then return end
-
     local count = self:CountSoulShards()
     local now = GetTime()
     
@@ -450,76 +446,49 @@ function WarlockNotif:GetBuffTimeLeft(buffName, unit)
 end
 
 -- Contar Soul Shards
--- Contar Soul Shards (FIXED)
 function WarlockNotif:CountSoulShards()
-    -- 1. Intentar API nativa (rápido y seguro)
-    if GetItemCount then
-        -- Verificar ambos idiomas por si acaso
-        local countEN = GetItemCount("Soul Shard") or 0
-        local countES = GetItemCount("Fragmento de alma") or 0
-        local total = countEN + countES
-        
-        -- Si encontramos shards por API, retornamos
-        if total > 0 then return total end
-        -- Si retorna 0, podría ser que la API falle o realmente tengamos 0. 
-        -- Hacemos fallback al escaneo manual solo para estar 100% seguros en clientes modificados.
-    end
-
-    -- 2. Fallback: Escaneo manual de bolsas
     local count = 0
     for bag = 0, 4 do
         for slot = 1, GetContainerNumSlots(bag) do
             local itemLink = GetContainerItemLink(bag, slot)
             if itemLink then
-                -- Método A: Buscar por ID 6265 (Infalible)
+                -- Buscar por Item ID 6265 (mas confiable que nombre)
+                -- El itemLink tiene formato |Hitem:6265:0:0:0|h[Soul Shard]|h
                 if string.find(itemLink, "6265") then
                     local _, itemCount = GetContainerItemInfo(bag, slot)
                     count = count + (itemCount or 1)
                 else
-                    -- Método B: Parsear nombre directo del link (evita GetItemInfo nil)
-                    local _, _, name = string.find(itemLink, "%[(.+)%]")
-                    if name then
-                        if name == "Soul Shard" or name == "Fragmento de alma" then
-                            local _, itemCount = GetContainerItemInfo(bag, slot)
-                            count = count + (itemCount or 1)
-                        end
+                    -- Fallback: buscar por nombre (solo si GetItemInfo funciona)
+                    local itemName = GetItemInfo(itemLink)
+                    if itemName and (string.find(itemName, "Soul Shard") or string.find(itemName, "Fragmento de alma")) then
+                        local _, itemCount = GetContainerItemInfo(bag, slot)
+                        count = count + (itemCount or 1)
                     end
-                end
-            end
+                end            end
         end
     end
     return count
 end
 
 -- Verificar si tiene Healthstone
--- Verificar si tiene Healthstone (FIXED)
 function WarlockNotif:HasHealthstone()
-    -- Lista completa de IDs de Healthstone (Vanilla 1.12)
-    -- Minor: 5512, Lesser: 5511, Normal: 5509/5510?, Greater: 5510, Major: 9421
-    -- Master: 22103, Soulwell versions: 19004-19013
-    local healthstoneIDs = {
-        "5512", "5511", "5509", "5510", "9421", "22103", -- Standard
-        "19004", "19005", "19006", "19007", "19008", "19009", "19010", "19011", "19012", "19013" -- Soulwell / Talented
-    }
+    -- Item IDs de todas las Healthstones en WoW 1.12
+    local healthstoneIDs = {"5512", "19004", "19005", "5511", "9421", "22103"}
     
     for bag = 0, 4 do
         for slot = 1, GetContainerNumSlots(bag) do
             local itemLink = GetContainerItemLink(bag, slot)
             if itemLink then
-                -- 1. Buscar por ID (Infalible)
+                -- Buscar por Item ID (mas confiable)
                 for _, itemID in ipairs(healthstoneIDs) do
                     if string.find(itemLink, itemID) then
                         return true
                     end
                 end
-                
-                -- 2. Fallback: Parsear nombre directo del link (evita GetItemInfo nil)
-                local _, _, name = string.find(itemLink, "%[(.+)%]")
-                if name then
-                    -- Buscar subcadena "Healthstone" o "Piedra de salud"
-                    if string.find(name, "Healthstone") or string.find(name, "Piedra de salud") then
-                        return true
-                    end
+                -- Fallback: buscar por nombre
+                local itemName = GetItemInfo(itemLink)
+                if itemName and (string.find(itemName, "Healthstone") or string.find(itemName, "Piedra de salud")) then
+                    return true
                 end
             end
         end
@@ -535,17 +504,13 @@ function WarlockNotif:GetHealthstoneCooldown()
         local spellName, spellRank = GetSpellName(i, BOOKTYPE_SPELL)
         if not spellName then break end
         
-        -- Buscar Create Healthstone (Eng) o Crear piedra de salud (Esp)
-        if string.find(spellName, "Healthstone") or string.find(spellName, "Piedra de salud") then
-             -- Asegurarse que sea "Create" (Crear) y no "Use" (Usar)
-             if string.find(spellName, "Create") or string.find(spellName, "Crear") then
-                local start, duration = GetSpellCooldown(i, BOOKTYPE_SPELL)
-                if start and duration then
-                    local remaining = (start + duration) - GetTime()
-                    return math.max(0, remaining)
-                end
-                return 0
-             end
+        if string.find(spellName, "Create Healthstone") then
+            local start, duration = GetSpellCooldown(i, BOOKTYPE_SPELL)
+            if start and duration then
+                local remaining = (start + duration) - GetTime()
+                return math.max(0, remaining)
+            end
+            return 0
         end
         i = i + 1
     end

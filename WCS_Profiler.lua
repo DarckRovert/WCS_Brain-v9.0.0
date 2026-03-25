@@ -1,11 +1,11 @@
 --[[
     WCS_Profiler.lua - Sistema de Profiling y Monitoreo de Rendimiento
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
-    Version 8.0.0 - Optimización de Rendimiento
+    Version: 6.4.2 - Optimización de Rendimiento
 ]]--
 
 WCS_Profiler = WCS_Profiler or {}
-WCS_Profiler.VERSION = "8.0.0"
+WCS_Profiler.VERSION = "6.4.2"
 WCS_Profiler.enabled = false
 
 -- ============================================================================

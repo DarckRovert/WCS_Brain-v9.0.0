@@ -33,9 +33,8 @@ WCS_ClanUI.Colors = {
     SoulBlue = {r = 0.3, g = 0.3, b = 0.8},      -- Azul Alma
 }
 
--- Las variables de entorno son inyectadas por el cliente de WoW despues del init.
--- Esta tabla base solo se usa en el primer lanzamiento o para mergear defaults
-local Default_SavedVars = {
+-- Variables guardadas
+WCS_ClanUI_SavedVars = WCS_ClanUI_SavedVars or {
     version = "1.0.0",
     firstRun = true,
     mainFrame = {
@@ -49,9 +48,9 @@ local Default_SavedVars = {
     panels = {
         clanPanel = true,
         warlockResources = true,
-        raidManager = true, -- Retained from original
-        statistics = true,  -- Retained from original
-        grimoire = true,    -- Retained from original
+        raidManager = true,
+        statistics = true,
+        grimoire = true,
         summonPanel = true,
         clanBank = true,
         pvpTracker = true,
@@ -72,34 +71,6 @@ local Default_SavedVars = {
 
 -- Frame principal
 local MainFrame = nil
-
--- Función auxiliar para inicializar variables seguras (merge defaults)
-function WCS_ClanUI:InitSavedVars()
-    if not WCS_ClanUI_SavedVars then
-        WCS_ClanUI_SavedVars = {}
-    end
-    
-    -- Recursively merge defaults (shallow for 2 levels is enough here)
-    for k, v in pairs(Default_SavedVars) do
-        if WCS_ClanUI_SavedVars[k] == nil then
-            if type(v) == "table" then
-                WCS_ClanUI_SavedVars[k] = {}
-                for nk, nv in pairs(v) do
-                    WCS_ClanUI_SavedVars[k][nk] = nv
-                end
-            else
-                WCS_ClanUI_SavedVars[k] = v
-            end
-        elseif type(v) == "table" and type(WCS_ClanUI_SavedVars[k]) == "table" then
-            -- Nivel 2 merge
-            for nk, nv in pairs(v) do
-                if WCS_ClanUI_SavedVars[k][nk] == nil then
-                    WCS_ClanUI_SavedVars[k][nk] = nv
-                end
-            end
-        end
-    end
-end
 
 -- Inicialización
 function WCS_ClanUI:Initialize()
@@ -129,293 +100,298 @@ function WCS_ClanUI:Initialize()
     self:Print("UI inicializada correctamente. Usa /sequito o /clan para abrir el panel.")
 end
 
+-- Colores refinados del Sequito v9
+local CLAN_COLORS = {
+    BG_DARK    = {0.03, 0.01, 0.06},
+    BG_SECTION = {0.08, 0.05, 0.12},
+    BORDER     = {0.2, 1.0, 0.2, 0.9},   -- Fel Green
+    GOLD       = {1.0, 0.82, 0.0},
+    PURPLE     = {0.58, 0.51, 0.79},
+    FEL        = {0.0, 1.0, 0.5},
+    TEXT_DIM   = {0.55, 0.55, 0.55},
+}
+
 -- Crear frame principal
 function WCS_ClanUI:CreateMainFrame()
     if MainFrame then return end
-    
-    -- Frame principal
+
     MainFrame = CreateFrame("Frame", "WCS_ClanUI_MainFrame", UIParent)
-    MainFrame:SetWidth(WCS_ClanUI_SavedVars.mainFrame.width)
-    MainFrame:SetHeight(WCS_ClanUI_SavedVars.mainFrame.height)
-    MainFrame:SetPoint(
-        WCS_ClanUI_SavedVars.mainFrame.point,
-        WCS_ClanUI_SavedVars.mainFrame.x,
-        WCS_ClanUI_SavedVars.mainFrame.y
-    )
+    MainFrame:SetWidth(700)
+    MainFrame:SetHeight(650)
     MainFrame:SetFrameStrata("HIGH")
     MainFrame:SetMovable(true)
     MainFrame:EnableMouse(true)
     MainFrame:SetClampedToScreen(true)
+    MainFrame:SetPoint("CENTER", 0, 0)
     MainFrame:Hide()
-    
-    -- Fondo oscuro con tema de grimorio
-    MainFrame.bg = MainFrame:CreateTexture(nil, "BACKGROUND")
-    MainFrame.bg:SetAllPoints(MainFrame)
-    MainFrame.bg:SetTexture(0, 0, 0, 0.95)
-    
-    -- Borde con tema demoníaco
-    MainFrame.border = CreateFrame("Frame", nil, MainFrame)
-    MainFrame.border:SetAllPoints(MainFrame)
-    MainFrame.border:SetBackdrop({
+
+    -- Fondo oscuro premium
+    MainFrame:SetBackdrop({
+        bgFile   = "Interface\\Tooltips\\UI-Tooltip-Background",
         edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        edgeSize = 16,
-        insets = {left = 4, right = 4, top = 4, bottom = 4}
+        tile = true, tileSize = 32, edgeSize = 20,
+        insets = {left = 5, right = 5, top = 5, bottom = 5}
     })
-    MainFrame.border:SetBackdropBorderColor(
-        self.Colors.FelGreen.r,
-        self.Colors.FelGreen.g,
-        self.Colors.FelGreen.b,
-        1
-    )
-    
-    -- Título del grimorio
-    MainFrame.title = MainFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-    MainFrame.title:SetPoint("TOP", 0, -10)
-    MainFrame.title:SetText("|cff00ff00El Séquito del Terror|r")
-    MainFrame.title:SetFont("Fonts\\FRIZQT__.TTF", 18, "OUTLINE")
-    MainFrame.title:SetTextColor(
-        self.Colors.FelGreen.r,
-        self.Colors.FelGreen.g,
-        self.Colors.FelGreen.b
-    )
-    
-    -- Subtítulo eliminado
-    
-    -- Botón de cerrar
-    MainFrame.closeButton = CreateFrame("Button", nil, MainFrame, "UIPanelCloseButton")
-    MainFrame.closeButton:SetPoint("TOPRIGHT", -5, -5)
-    MainFrame.closeButton:SetScript("OnClick", function()
-        WCS_ClanUI:ToggleMainFrame()
-    end)
-    
-    -- Hacer el frame movible
-    MainFrame:SetScript("OnMouseDown", function()
-        if arg1 == "LeftButton" then
-            MainFrame:StartMoving()
+    MainFrame:SetBackdropColor(
+        CLAN_COLORS.BG_DARK[1],
+        CLAN_COLORS.BG_DARK[2],
+        CLAN_COLORS.BG_DARK[3], 0.97)
+    MainFrame:SetBackdropBorderColor(
+        CLAN_COLORS.BORDER[1],
+        CLAN_COLORS.BORDER[2],
+        CLAN_COLORS.BORDER[3],
+        CLAN_COLORS.BORDER[4])
+
+    -- Header decorativo (mas compacto)
+    local headerBg = CreateFrame("Frame", nil, MainFrame)
+    headerBg:SetPoint("TOPLEFT", MainFrame, "TOPLEFT", 8, -8)
+    headerBg:SetPoint("TOPRIGHT", MainFrame, "TOPRIGHT", -8, -8)
+    headerBg:SetHeight(44)
+    headerBg:SetBackdrop({
+        bgFile   = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 10,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
+    })
+    headerBg:SetBackdropColor(0.0, 0.05, 0.01, 0.95)
+    headerBg:SetBackdropBorderColor(0.0, 1.0, 0.3, 0.8)
+
+    -- Icono del clan
+    local clanIcon = headerBg:CreateTexture(nil, "ARTWORK")
+    clanIcon:SetWidth(30)
+    clanIcon:SetHeight(30)
+    clanIcon:SetPoint("LEFT", headerBg, "LEFT", 8, 0)
+    clanIcon:SetTexture("Interface\\Icons\\INV_Misc_Book_09")
+
+    -- Titulo del clan
+    local clanTitle = headerBg:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+    clanTitle:SetPoint("LEFT", clanIcon, "RIGHT", 6, 4)
+    clanTitle:SetText("|cFF00FF00El Sequito del Terror|r")
+    clanTitle:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
+
+    local clanSub = headerBg:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    clanSub:SetPoint("LEFT", clanIcon, "RIGHT", 6, -10)
+    clanSub:SetText("|cFFFFD700Grimorio del Sequito v9.0|r")
+
+    -- Info jugador
+    local playerInfo = headerBg:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
+    playerInfo:SetPoint("RIGHT", headerBg, "RIGHT", -36, 0)
+    playerInfo:SetText("|cFFAAAAAA" .. (UnitName("player") or "?") .. "|r")
+    MainFrame.playerInfo = playerInfo
+
+    -- Boton cerrar
+    local closeBtn = CreateFrame("Button", nil, MainFrame, "UIPanelCloseButton")
+    closeBtn:SetPoint("TOPRIGHT", MainFrame, "TOPRIGHT", -3, -3)
+    closeBtn:SetScript("OnClick", function() WCS_ClanUI:ToggleMainFrame() end)
+
+    -- Drag por header
+    headerBg:EnableMouse(true)
+    headerBg:RegisterForDrag("LeftButton")
+    headerBg:SetScript("OnDragStart", function() MainFrame:StartMoving() end)
+    headerBg:SetScript("OnDragStop", function()
+        MainFrame:StopMovingOrSizing()
+        local point, _, _, x, y = MainFrame:GetPoint()
+        if WCS_ClanUI_SavedVars and WCS_ClanUI_SavedVars.mainFrame then
+            WCS_ClanUI_SavedVars.mainFrame.point = point
+            WCS_ClanUI_SavedVars.mainFrame.x = x
+            WCS_ClanUI_SavedVars.mainFrame.y = y
         end
     end)
-    
-    MainFrame:SetScript("OnMouseUp", function()
-        MainFrame:StopMovingOrSizing()
-        -- Guardar posición
-        local point, _, _, x, y = MainFrame:GetPoint()
-        WCS_ClanUI_SavedVars.mainFrame.point = point
-        WCS_ClanUI_SavedVars.mainFrame.x = x
-        WCS_ClanUI_SavedVars.mainFrame.y = y
-    end)
-    
-    -- Crear pestañas para diferentes paneles
-    self:CreateTabs()
-    
-    -- Crear área de contenido
+
+    -- Marco de contenido (bajo las pestanas, posicion calculada despues de crear tabs)
     MainFrame.content = CreateFrame("Frame", nil, MainFrame)
-    MainFrame.content:SetPoint("TOPLEFT", 10, -80)
-    MainFrame.content:SetPoint("BOTTOMRIGHT", -10, 10)
-    
+    MainFrame.content:SetBackdrop({
+        bgFile   = "Interface\\Tooltips\\UI-Tooltip-Background",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        tile = true, tileSize = 16, edgeSize = 12,
+        insets = {left = 3, right = 3, top = 3, bottom = 3}
+    })
+    MainFrame.content:SetBackdropColor(
+        CLAN_COLORS.BG_SECTION[1],
+        CLAN_COLORS.BG_SECTION[2],
+        CLAN_COLORS.BG_SECTION[3], 0.95)
+    MainFrame.content:SetBackdropBorderColor(
+        CLAN_COLORS.BORDER[1], CLAN_COLORS.BORDER[2], CLAN_COLORS.BORDER[3], 0.4)
+
+    -- Crear pestanas
+    self:CreateTabs()
+
     self.MainFrame = MainFrame
 end
 
--- Crear pestañas
+-- Sistema de pestanas
 function WCS_ClanUI:CreateTabs()
-    local tabs = {
-        {name = "Clan", icon = "Interface\\Icons\\INV_Misc_Book_11"},
-    }
-    
-    local _, class = UnitClass("player")
-    if class == "WARLOCK" then
-        table.insert(tabs, {name = "Recursos", icon = "Interface\\Icons\\INV_Misc_Gem_Amethyst_02"})
+    local _, playerClass = UnitClass("player")
+    local isWarlock = (playerClass == "WARLOCK")
+
+    local allTabs = {}
+
+    -- Pestanas Universales
+    table.insert(allTabs, {
+        name = "Clan",
+        icon = "Interface\\Icons\\INV_Misc_Book_11",
+        getPanel = function() return _G["WCS_ClanPanelFrame"] end,
+        createFn  = function() if WCS_ClanPanel and WCS_ClanPanel.Initialize then WCS_ClanPanel:Initialize() end end
+    })
+    table.insert(allTabs, {
+        name = "Stats",
+        icon = "Interface\\Icons\\INV_Misc_Note_01",
+        getPanel = function() return _G["WCS_StatisticsFrame"] end,
+        createFn  = function() if WCS_Statistics and WCS_Statistics.Initialize then WCS_Statistics:Initialize() end end
+    })
+    table.insert(allTabs, {
+        name = "Banco",
+        icon = "Interface\\Icons\\INV_Misc_Bag_10",
+        getPanel = function() return _G["WCS_ClanBankFrame"] end,
+        createFn  = function() if WCS_ClanBank and WCS_ClanBank.Initialize then WCS_ClanBank:Initialize() end end
+    })
+    table.insert(allTabs, {
+        name = "Raid",
+        icon = "Interface\\Icons\\Ability_Warlock_DemonicEmpowerment",
+        getPanel = function() return _G["WCS_RaidManagerFrame"] end,
+        createFn  = function() if WCS_RaidManager and WCS_RaidManager.Initialize then WCS_RaidManager:Initialize() end end
+    })
+    table.insert(allTabs, {
+        name = "PvP",
+        icon = "Interface\\Icons\\Ability_DualWield",
+        getPanel = function() return _G["WCS_PvPTrackerFrame"] end,
+        createFn  = function() if WCS_PvPTracker and WCS_PvPTracker.Initialize then WCS_PvPTracker:Initialize() end end
+    })
+
+    -- Pestanas de Brujo
+    if isWarlock then
+        table.insert(allTabs, {
+            name = "Grimorio",
+            icon = "Interface\\Icons\\INV_Misc_Book_09",
+            getPanel = function() return _G["WCS_GrimoireFrame"] end,
+            createFn  = function() if WCS_Grimoire and WCS_Grimoire.Initialize then WCS_Grimoire:Initialize() end end
+        })
+        table.insert(allTabs, {
+            name = "Recursos",
+            icon = "Interface\\Icons\\INV_Misc_Gem_Amethyst_02",
+            getPanel = function() return _G["WCS_WarlockResourcesFrame"] end,
+            createFn  = function() if WCS_WarlockResources and WCS_WarlockResources.Initialize then WCS_WarlockResources:Initialize() end end
+        })
+        table.insert(allTabs, {
+            name = "Summons",
+            icon = "Interface\\Icons\\Spell_Shadow_Twilight",
+            getPanel = function() return _G["WCS_SummonPanelFrame"] end,
+            createFn  = function() if WCS_SummonPanel and WCS_SummonPanel.Initialize then WCS_SummonPanel:Initialize() end end
+        })
     end
-    
-    table.insert(tabs, {name = "Raid", icon = "Interface\\Icons\\Ability_Warlock_DemonicEmpowerment"})
-    table.insert(tabs, {name = "Stats", icon = "Interface\\Icons\\INV_Misc_Note_01"})
-    table.insert(tabs, {name = "Grimorio", icon = "Interface\\Icons\\INV_Misc_Book_09"})
-    table.insert(tabs, {name = "Summons", icon = "Interface\\Icons\\Spell_Shadow_Twilight"})
-    table.insert(tabs, {name = "Bank", icon = "Interface\\Icons\\INV_Misc_Bag_10"})
-    table.insert(tabs, {name = "PvP", icon = "Interface\\Icons\\Ability_DualWield"})
-    
+
+    self.tabDataList = allTabs
     MainFrame.tabs = {}
-    local tabWidth = 90
-    local tabHeight = 30
-    local startX = 10
-    
-    for i = 1, table.getn(tabs) do
-        local tabData = tabs[i]
+
+    local tabWidth  = 82
+    local tabHeight = 26
+    local tabGap    = 3
+    local startX    = 10
+    local startY    = -58  -- despues del header de 44px + 8px margen + 6px gap
+    local maxPerRow = 8
+
+    for i = 1, table.getn(allTabs) do
+        local tabData = allTabs[i]
         local tab = CreateFrame("Button", "WCS_ClanUI_Tab" .. i, MainFrame)
         tab:SetWidth(tabWidth)
         tab:SetHeight(tabHeight)
-        tab:SetPoint("TOPLEFT", startX + (i-1) * (tabWidth + 5), -40)
-        
-        -- Fondo de la pestaña
+
+        local row = math.floor((i - 1) / maxPerRow)
+        local col = math.mod(i - 1, maxPerRow)
+        tab:SetPoint("TOPLEFT", startX + col * (tabWidth + tabGap), startY - row * (tabHeight + tabGap))
+
         tab.bg = tab:CreateTexture(nil, "BACKGROUND")
         tab.bg:SetAllPoints(tab)
-        tab.bg:SetTexture(0.2, 0.2, 0.2, 0.8)
-        
-        -- Icono
+        tab.bg:SetTexture(
+            CLAN_COLORS.BG_SECTION[1],
+            CLAN_COLORS.BG_SECTION[2],
+            CLAN_COLORS.BG_SECTION[3], 0.85)
+
         tab.icon = tab:CreateTexture(nil, "ARTWORK")
-        tab.icon:SetWidth(20)
-        tab.icon:SetHeight(20)
-        tab.icon:SetPoint("LEFT", 5, 0)
+        tab.icon:SetWidth(16)
+        tab.icon:SetHeight(16)
+        tab.icon:SetPoint("LEFT", 4, 0)
         tab.icon:SetTexture(tabData.icon)
-        
-        -- Texto
+
         tab.text = tab:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        tab.text:SetPoint("LEFT", tab.icon, "RIGHT", 5, 0)
+        tab.text:SetPoint("LEFT", tab.icon, "RIGHT", 3, 0)
         tab.text:SetText(tabData.name)
-        tab.text:SetFont("Fonts\\FRIZQT__.TTF", 10, "OUTLINE")
-        
-        -- Highlight
+        tab.text:SetFont("Fonts\\FRIZQT__.TTF", 9, "OUTLINE")
+        tab.text:SetTextColor(
+            CLAN_COLORS.TEXT_DIM[1],
+            CLAN_COLORS.TEXT_DIM[2],
+            CLAN_COLORS.TEXT_DIM[3])
+
         tab:SetHighlightTexture("Interface\\Buttons\\UI-Panel-Button-Highlight")
-        
-        -- Guardar índice en el tab
         tab.index = i
-        
-        -- Click handler (usar this.index en lugar de i para evitar problemas de closure en Lua 5.0)
-        tab:SetScript("OnClick", function()
-            WCS_ClanUI:SelectTab(this.index)
-        end)
-        
+        tab:SetScript("OnClick", function() WCS_ClanUI:SelectTab(this.index) end)
+
         MainFrame.tabs[i] = tab
     end
-    
-    -- NO seleccionar pestaña aquí, se hará en ToggleMainFrame después de crear el área de contenido
+
+    -- Calcular area de contenido correctamente
+    local rowsUsed    = math.floor((table.getn(allTabs) - 1) / maxPerRow) + 1
+    local contentTopY = -58 - (rowsUsed * (tabHeight + tabGap)) - 6
+    MainFrame.content:SetPoint("TOPLEFT",     MainFrame, "TOPLEFT",     10, contentTopY)
+    MainFrame.content:SetPoint("BOTTOMRIGHT", MainFrame, "BOTTOMRIGHT", -10, 10)
 end
 
--- Seleccionar pestaña
+-- Seleccionar pestana
 function WCS_ClanUI:SelectTab(index)
-    -- self:Print("SelectTab llamado con index: " .. index)
-    
-    if not MainFrame then
-        self:Print("ERROR: MainFrame no existe")
-        return
-    end
-    
-    if not MainFrame.content then
-        self:Print("ERROR: MainFrame.content no existe")
-        return
-    end
-    
-    self:Print("MainFrame y content existen, continuando...")
-    
-    -- Actualizar apariencia de pestañas
+    if not MainFrame or not MainFrame.content then return end
+
     for i = 1, table.getn(MainFrame.tabs) do
         local tab = MainFrame.tabs[i]
         if i == index then
             tab.bg:SetTexture(
-                self.Colors.FelGreen.r,
-                self.Colors.FelGreen.g,
-                self.Colors.FelGreen.b,
-                0.5
-            )
+                CLAN_COLORS.FEL[1], CLAN_COLORS.FEL[2], CLAN_COLORS.FEL[3], 0.45)
             tab.text:SetTextColor(1, 1, 1)
         else
-            tab.bg:SetTexture(0.2, 0.2, 0.2, 0.8)
-            tab.text:SetTextColor(0.7, 0.7, 0.7)
+            tab.bg:SetTexture(
+                CLAN_COLORS.BG_SECTION[1], CLAN_COLORS.BG_SECTION[2],
+                CLAN_COLORS.BG_SECTION[3], 0.85)
+            tab.text:SetTextColor(
+                CLAN_COLORS.TEXT_DIM[1], CLAN_COLORS.TEXT_DIM[2], CLAN_COLORS.TEXT_DIM[3])
         end
     end
-    
-    -- Ocultar todos los paneles primero
-    self:Print("Ocultando todos los paneles...")
+
     self:HideAllPanels()
-    
-    -- Mostrar panel seleccionado
-    self:Print("Mostrando panel " .. index)
     self:ShowPanel(index)
-    
-    -- Guardar pestaña actual
     MainFrame.currentTab = index
-    -- self:Print("SelectTab completado")
 end
 
 -- Ocultar todos los paneles
 function WCS_ClanUI:HideAllPanels()
-    if WCS_ClanPanel then WCS_ClanPanel:Hide() end
-    if WCS_WarlockResources then WCS_WarlockResources:Hide() end
-    if WCS_RaidManager then WCS_RaidManager:Hide() end
-    if WCS_Statistics then WCS_Statistics:Hide() end
-    if WCS_Grimoire then WCS_Grimoire:Hide() end
-    if WCS_SummonPanel then WCS_SummonPanel:Hide() end
-    if WCS_ClanBank then WCS_ClanBank:Hide() end
-    if WCS_PvPTracker then WCS_PvPTracker:Hide() end
+    if self.tabDataList then
+        for i = 1, table.getn(self.tabDataList) do
+            local p = self.tabDataList[i].getPanel and self.tabDataList[i].getPanel() or nil
+            if p and p.Hide then p:Hide() end
+        end
+    end
 end
 
--- Mostrar panel específico
+-- Mostrar panel con lazy loading (similar a WCS_BrainUI)
 function WCS_ClanUI:ShowPanel(index)
-    -- self:Print("ShowPanel llamado con index: " .. index)
-    
-    -- Asegurarse de que el frame principal y el área de contenido existen
-    if not self.MainFrame then
-        self:Print("Error: MainFrame no existe")
-        return
+    if not self.MainFrame or not self.MainFrame.content then return end
+    if not self.tabDataList or not self.tabDataList[index] then return end
+
+    local tabData = self.tabDataList[index]
+    local p = tabData.getPanel and tabData.getPanel() or nil
+
+    -- Lazy load: crear el panel si no existe
+    if not p and tabData.createFn then
+        tabData.createFn()
+        p = tabData.getPanel and tabData.getPanel() or nil
     end
-    
-    if not self.MainFrame.content then
-        self:Print("Error: MainFrame.content no existe")
-        return
-    end
-    
-    self:Print("Intentando mostrar panel " .. index)
-    
-    local panels = {
-        function() 
-            if WCS_ClanPanel then 
-                WCS_ClanPanel:Show() 
-            else
-                self:Print("Error: WCS_ClanPanel no existe")
-            end
-        end,
-        function() 
-            if WCS_WarlockResources then 
-                WCS_WarlockResources:Show() 
-            else
-                self:Print("Error: WCS_WarlockResources no existe")
-            end
-        end,
-        function() 
-            if WCS_RaidManager then 
-                WCS_RaidManager:Show() 
-            else
-                self:Print("Error: WCS_RaidManager no existe")
-            end
-        end,
-        function() 
-            if WCS_Statistics then 
-                WCS_Statistics:Show() 
-            else
-                self:Print("Error: WCS_Statistics no existe")
-            end
-        end,
-        function() 
-            if WCS_Grimoire then 
-                WCS_Grimoire:Show() 
-            else
-                self:Print("Error: WCS_Grimoire no existe")
-            end
-        end,
-        function() 
-            if WCS_SummonPanel then 
-                WCS_SummonPanel:Show() 
-            else
-                self:Print("Error: WCS_SummonPanel no existe")
-            end
-        end,
-        function() 
-            if WCS_ClanBank then 
-                WCS_ClanBank:Show() 
-            else
-                self:Print("Error: WCS_ClanBank no existe")
-            end
-        end,
-        function() 
-            if WCS_PvPTracker then 
-                WCS_PvPTracker:Show() 
-            else
-                self:Print("Error: WCS_PvPTracker no existe")
-            end
-        end,
-    }
-    
-    if panels[index] then
-        panels[index]()
+
+    if p and p.Show then
+        -- Reparentar y fijar al area de contenido
+        p:SetParent(self.MainFrame.content)
+        p:ClearAllPoints()
+        p:SetAllPoints(self.MainFrame.content)
+        p:SetMovable(false)
+        p:SetBackdropBorderColor(0, 0, 0, 0)
+        p:Show()
     end
 end
 
@@ -665,21 +641,16 @@ function WCS_ClanUI:Print(msg)
     DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00[Séquito del Terror]|r " .. msg)
 end
 
--- Toggle es alias de ToggleMainFrame para compatibilidad con ButtonBar y SequitoButton
-WCS_ClanUI.Toggle = WCS_ClanUI.ToggleMainFrame
-
 -- Inicializar cuando el addon se carga
 local initFrame = CreateFrame("Frame")
 initFrame:RegisterEvent("ADDON_LOADED")
 initFrame:RegisterEvent("PLAYER_LOGIN")
 initFrame:SetScript("OnEvent", function()
     if event == "ADDON_LOADED" and arg1 == "WCS_Brain" then
-        WCS_ClanUI:InitSavedVars()
         WCS_ClanUI:Initialize()
     elseif event == "PLAYER_LOGIN" then
         -- Fallback: inicializar en login si no se inicializó antes
         if not WCS_ClanUI.Initialized then
-            WCS_ClanUI:InitSavedVars()
             WCS_ClanUI:Initialize()
         end
     end

@@ -1,5 +1,5 @@
 -- WCS_BrainBossMods.lua
--- Integración con BigWigs y DBM para WCS_Brain v8.0.0
+-- Integración con BigWigs y DBM para WCS_Brain v6.9.0
 -- Reacciona automáticamente a alertas de boss mods
 
 if not WCS_Brain then return end
@@ -59,7 +59,7 @@ function BossMods:Initialize()
     self.frame = frame
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Info("Integración Boss Mods inicializada")
+        WCS_Brain.Notifications:Info("Integración Boss Mods inicializada")
     end
 end
 
@@ -79,7 +79,7 @@ function BossMods:CheckBossMods()
     
     if not self.isBigWigsLoaded and not self.isDBMLoaded then
         if WCS_Brain.Notifications then
-            WCS_BrainNotifications:Info("No se detectó BigWigs ni DBM")
+            WCS_Brain.Notifications:Info("No se detectó BigWigs ni DBM")
         end
     end
 end
@@ -90,7 +90,7 @@ function BossMods:OnBigWigsLoaded()
     self:SetupBigWigsHooks()
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Success("BigWigs detectado - Integración activa")
+        WCS_Brain.Notifications:Success("BigWigs detectado - Integración activa")
     else
         DEFAULT_CHAT_FRAME:AddMessage("WCS Brain: BigWigs detectado", 0, 1, 0)
     end
@@ -102,7 +102,7 @@ function BossMods:OnDBMLoaded()
     self:SetupDBMHooks()
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Success("DBM detectado - Integración activa")
+        WCS_Brain.Notifications:Success("DBM detectado - Integración activa")
     else
         DEFAULT_CHAT_FRAME:AddMessage("WCS Brain: DBM detectado", 0, 1, 0)
     end
@@ -262,7 +262,7 @@ function BossMods:ProcessAlert(alert)
     -- Notificar al jugador si está configurado
     if self.config.notifyPlayer and WCS_Brain.Notifications then
         local source = alert.source or "Boss Mod"
-        WCS_BrainNotifications:Info(source .. ": " .. alert.message)
+        WCS_Brain.Notifications:Info(source .. ": " .. alert.message)
     end
     
     -- Ejecutar callbacks registrados
@@ -371,7 +371,7 @@ function BossMods:ReactToPhase(alert)
     self.activeAlerts = {}
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Warning("Cambio de fase detectado")
+        WCS_Brain.Notifications:Warning("Cambio de fase detectado")
     end
     
     self.stats.reactionsTriggered = self.stats.reactionsTriggered + 1
@@ -391,7 +391,7 @@ function BossMods:ReactToPull(alert)
     end
     
     if WCS_Brain.Notifications then
-        WCS_BrainNotifications:Warning("Pull detectado - Preparando combate")
+        WCS_Brain.Notifications:Warning("Pull detectado - Preparando combate")
     end
     
     self.stats.reactionsTriggered = self.stats.reactionsTriggered + 1
@@ -419,7 +419,7 @@ function BossMods:ExecuteCallbacks(alert)
         local success, err = pcall(func, alert)
         if not success then
             if WCS_Brain.Notifications then
-                WCS_BrainNotifications:Error("Error en callback " .. name .. ": " .. tostring(err))
+                WCS_Brain.Notifications:Error("Error en callback " .. name .. ": " .. tostring(err))
             end
         end
     end
@@ -498,7 +498,7 @@ SlashCmdList["WCSBOSSMODS"] = function(msg)
         BossMods.config.autoReact = not BossMods.config.autoReact
         local status = BossMods.config.autoReact and "ACTIVADO" or "DESACTIVADO"
         if WCS_Brain.Notifications then
-            WCS_BrainNotifications:Success("Auto React " .. status)
+            WCS_Brain.Notifications:Success("Auto React " .. status)
         else
             DEFAULT_CHAT_FRAME:AddMessage("WCS Boss Mods: Auto React " .. status, 0, 1, 0)
         end
@@ -506,7 +506,7 @@ SlashCmdList["WCSBOSSMODS"] = function(msg)
     elseif msg == "clear" then
         BossMods.activeAlerts = {}
         if WCS_Brain.Notifications then
-            WCS_BrainNotifications:Success("Alertas limpiadas")
+            WCS_Brain.Notifications:Success("Alertas limpiadas")
         else
             DEFAULT_CHAT_FRAME:AddMessage("WCS Boss Mods: Alertas limpiadas", 0, 1, 0)
         end
@@ -528,5 +528,5 @@ SLASH_WCSBOSSMODS2 = "/wcsbossmods"
 BossMods:Initialize()
 
 if WCS_Brain.Notifications then
-    WCS_BrainNotifications:Info("Integración Boss Mods lista. Usa /wcsbm")
+    WCS_Brain.Notifications:Info("Integración Boss Mods lista. Usa /wcsbm")
 end

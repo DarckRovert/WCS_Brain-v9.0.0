@@ -15,13 +15,9 @@ function PM:OnUpdate()
     if not UnitExists("pet") then return end
     
     -- [1] DELEGACIÓN AL MOTOR AVANZADO (Si es Brujo)
-    -- Esto evita que el bucle básico pise las decisiones tácticas del PetAI
-    if cls == "WARLOCK" and WCS_BrainPetAI and WCS_BrainPetAI.PetAI then
-        -- El PetAI ya tiene su propio OnUpdate interno (0.5s), 
-        -- pero aquí aseguramos que nada del PetManager básico interfiera.
-        if WCS_BrainPetAI.PetAI.ENABLED then
-            return -- Si PetAI está activo, él toma el control total
-        end
+    -- Esto garantiza que el PetAI tome el control total sin interferencias del manager básico
+    if cls == "WARLOCK" and WCS_BrainPetAI and WCS_BrainPetAI.ENABLED then
+        return -- Si PetAI está activo, él toma el control total
     end
 
     -- [2] Lógica básica para Cazadores o si PetAI está apagado

@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainLocale.lua - Sistema de Localización v8.0.0
+    WCS_BrainLocale.lua - Sistema de Localización v6.6.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Sistema de traducción para múltiples idiomas
@@ -10,7 +10,7 @@
 ]]--
 
 WCS_BrainLocale = WCS_BrainLocale or {}
-WCS_BrainLocale.VERSION = "8.0.0"
+WCS_BrainLocale.VERSION = "6.6.0"
 
 -- ============================================================================
 -- CONFIGURACIÓN

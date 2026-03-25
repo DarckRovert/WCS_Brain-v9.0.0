@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainContextual.lua - Sistema de Configuración Contextual v8.0.0
+    WCS_BrainContextual.lua - Sistema de Configuración Contextual v6.4.2
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Sistema de pesos dinámicos según contexto:
@@ -10,7 +10,7 @@
 ]]--
 
 WCS_BrainContextual = WCS_BrainContextual or {}
-WCS_BrainContextual.VERSION = "8.0.0"
+WCS_BrainContextual.VERSION = "6.4.2"
 WCS_BrainContextual.enabled = true
 
 -- ============================================================================

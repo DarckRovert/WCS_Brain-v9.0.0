@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainMacros.lua - Sistema de Macros Automáticas v8.0.0
+    WCS_BrainMacros.lua - Sistema de Macros Automáticas v6.6.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Genera macros optimizadas basadas en el aprendizaje del Brain
@@ -8,7 +8,7 @@
 ]]--
 
 WCS_BrainMacros = WCS_BrainMacros or {}
-WCS_BrainMacros.VERSION = "8.0.0"
+WCS_BrainMacros.VERSION = "6.6.0"
 
 -- ============================================================================
 -- CONFIGURACIÓN

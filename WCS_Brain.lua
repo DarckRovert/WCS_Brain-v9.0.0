@@ -1,12 +1,12 @@
 --[[
-    WCS_Brain.lua - Cerebro Central Unificado v8.0.0
+    WCS_Brain.lua - Cerebro Central Unificado v6.7.0
     Sistema de IA Independiente para Warlock
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     SISTEMA COMPLETAMENTE AUTOSUFICIENTE
     Solo requiere: WCS_SpellDB.lua, WCS_BrainCore.lua, WCS_BrainUI.lua
     
-    v8.0.0 - Cerebro Unificado:
+    v6.4.0 - Cerebro Unificado:
     - Sistema de votacion integrado (no depende de WCS_DemonologyAI)
     - DemonKnowledge completo (Imp, Voidwalker, Succubus, Felhunter)
     - Deteccion inteligente (casters, CC, amenaza)
@@ -16,7 +16,7 @@
 ]]--
 
 WCS_Brain = WCS_Brain or {}
-WCS_Brain.VERSION = "8.0.0"
+WCS_Brain.VERSION = "7.0.0"
 WCS_Brain.ENABLED = true
 WCS_Brain.DEBUG = false
 
@@ -1407,25 +1407,25 @@ if not SlashCmdList["WCSHOTFIX631"] then
             if WCS_HotFix_v631 and WCS_HotFix_v631.VerifyFixes then
                 local issues = WCS_HotFix_v631:VerifyFixes()
                 if WCS_TableCount(issues) == 0 then
-                    DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS HotFix v8.0.0]|r ✓ Todas las correcciones funcionan correctamente")
+                    DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS HotFix v6.3.1]|r ✓ Todas las correcciones funcionan correctamente")
                 else
-                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS HotFix v8.0.0]|r ✗ Se encontraron " .. WCS_TableCount(issues) .. " problemas:")
+                    DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS HotFix v6.3.1]|r ✗ Se encontraron " .. WCS_TableCount(issues) .. " problemas:")
                     for i = 1, WCS_TableCount(issues) do
                         DEFAULT_CHAT_FRAME:AddMessage("  |cFFFF0000- " .. issues[i] .. "|r")
                     end
                 end
             else
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS HotFix v8.0.0]|r No cargado o no disponible")
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS HotFix v6.3.1]|r No cargado o no disponible")
             end
         elseif m == "reapply" then
             if WCS_HotFix_v631 and WCS_HotFix_v631.Apply then
                 WCS_HotFix_v631.applied = false
                 WCS_HotFix_v631:Apply()
             else
-                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS HotFix v8.0.0]|r No cargado: no se puede reaplicar")
+                DEFAULT_CHAT_FRAME:AddMessage("|cFFFF0000[WCS HotFix v6.3.1]|r No cargado: no se puede reaplicar")
             end
         else
-            DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS HotFix v8.0.0]|r Comandos disponibles:")
+            DEFAULT_CHAT_FRAME:AddMessage("|cFF00FF00[WCS HotFix v6.3.1]|r Comandos disponibles:")
             DEFAULT_CHAT_FRAME:AddMessage("  |cFFFFCC00/wcshotfix631 verify|r - Verificar correcciones")
             DEFAULT_CHAT_FRAME:AddMessage("  |cFFFFCC00/wcshotfix631 reapply|r - Reaplicar correcciones")
         end

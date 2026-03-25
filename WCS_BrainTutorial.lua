@@ -1,5 +1,5 @@
 --[[
-    WCS_BrainTutorial.lua - Tutorial Interactivo v8.0.0
+    WCS_BrainTutorial.lua - Tutorial Interactivo v6.5.0
     Compatible con Lua 5.0 (WoW 1.12 / Turtle WoW)
     
     Tutorial paso a paso para nuevos usuarios
@@ -8,7 +8,7 @@
 ]]--
 
 WCS_BrainTutorial = WCS_BrainTutorial or {}
-WCS_BrainTutorial.VERSION = "8.0.0"
+WCS_BrainTutorial.VERSION = "6.5.0"
 WCS_BrainTutorial.active = false
 WCS_BrainTutorial.currentStep = 1
 

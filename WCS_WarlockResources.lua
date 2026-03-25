@@ -66,8 +66,8 @@ function WCS_WarlockResources:Initialize()
         tile = true, tileSize = 16, edgeSize = 16,
         insets = {left = 4, right = 4, top = 4, bottom = 4}
     })
-    petPanel:SetBackdropColor(0, 0, 0, 0.9)
-    petPanel:SetBackdropBorderColor(0.2, 1.0, 0.2, 1.0)
+    petPanel:SetBackdropColor(0.1, 0.0, 0.15, 0.8)
+    petPanel:SetBackdropBorderColor(0.5, 0.0, 0.5, 0.8)
     
     local petTitle = petPanel:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     petTitle:SetPoint("TOP", 0, -8)
@@ -104,8 +104,8 @@ function WCS_WarlockResources:CreateResourcePanel(parent, title, x, y, icon, but
         tile = true, tileSize = 16, edgeSize = 16,
         insets = {left = 4, right = 4, top = 4, bottom = 4}
     })
-    frame:SetBackdropColor(0, 0, 0, 0.9)
-    frame:SetBackdropBorderColor(0.2, 1.0, 0.2, 0.8)
+    frame:SetBackdropColor(0.1, 0.0, 0.15, 0.8)
+    frame:SetBackdropBorderColor(0.2, 1.0, 0.2, 0.5)
     
     -- Icono
     local iconTexture = frame:CreateTexture(nil, "ARTWORK")
