@@ -1,5 +1,13 @@
 # Changelog - WCS_Brain
 
+## [9.0.0] - Marzo 25, 2026
+### ✨ UI OVERHAUL & NATIVE INTEGRATION
+- **Panel Maestro Consolidado**: Todas las ventanas secundarias flotantes (Perfiles, Auto-Ejecución, Logros, Diagnóstico, Integraciones) se han movido a un único panel maestro de 680x490px con estética coherente ("Séquito del Terror").
+- **Eliminación de Ventanas Vacías**: El script `WCS_BrainTabPanels.lua` ya no depende del orden del `.toc` para inyectar su UI. Se han eliminado los envoltorios condicionales, resolviendo el problema crónico donde los tabs aparecían vacíos.
+- **Lazy Loading**: Todas las vistas de UI son inicializadas de forma perezosa mediante `getPanel()` para no sobrecargar el login del usuario, garantizando 0 lag en el primer frame.
+- **Resolución de Colisiones**: Reescritura del frame de `WCSBrainDiagnosticsFrame` para permitir el funcionamiento paralelo de los comandos de barra (`/wcsdiag`) con la pestaña del Clan de forma segura.
+- **Purga de Syntax Errors**: Se resolvieron 3 errores de parseo `<eof> expected` generados tras la eliminación de los wrappers en `TabPanels.lua`.
+
 ## [8.3.7-RESTORED] - Marzo 24, 2026
 ### FIXED
 - **RESTAURACIÓN TOTAL**: Se ha recuperado el núcleo de IA de mascotas original del respaldo funcional de F:\ (72KB).
