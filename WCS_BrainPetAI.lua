@@ -477,6 +477,45 @@ PetAI.AbilityTextures = {
     ["immolation"]          = "Spell_Shadow_Immolation"
 }
 
+-- Diccionario Exclusivo de Casteo (Asegura la sintaxis y mayúsculas perfectas para CastSpellByName en ES)
+-- Previene los fallos de aliasing (ej: que Firebolt devuelva "Machetazo" en vez de "Bola de Fuego")
+PetAI.CastAliases = {
+    ["fire shield"] = "Escudo de fuego",
+    ["firebolt"] = "Bola de Fuego",
+    ["blood pact"] = "Pacto de sangre",
+    ["phase shift"] = "Cambio de fase",
+    ["torment"] = "Tormento",
+    ["consume shadows"] = "Consumir sombras",
+    ["sacrifice"] = "Sacrificio",
+    ["suffering"] = "Sufrimiento",
+    ["lash of pain"] = "Latigazo de dolor",
+    ["seduction"] = "Seducción",
+    ["soothing kiss"] = "Beso tranquilizador",
+    ["lesser invisibility"] = "Invisibilidad menor",
+    ["spell lock"] = "Bloqueo de hechizo",
+    ["devour magic"] = "Devorar magia",
+    ["paranoia"] = "Paranoia",
+    ["cleave"] = "Hender",
+    ["intercept"] = "Interceptar",
+    ["anguish"] = "Angustia",
+    ["demonic frenzy"] = "Frenesí demoníaco",
+    ["enslave demon"] = "Esclavizar Demonio"
+}
+
+function PetAI:GetExactCastName(spellName)
+    if not spellName then return nil end
+    local s = string.lower(spellName)
+    local locale = GetLocale()
+    if locale == "esES" or locale == "esMX" then
+        if self.CastAliases[s] then return self.CastAliases[s] end
+    end
+    -- Fallback al diccionario general (que itera aleatoriamente)
+    if WCS_SpellLocalization and WCS_SpellLocalization.LocalizeSpellName then
+        return WCS_SpellLocalization:LocalizeSpellName(spellName) or spellName
+    end
+    return spellName
+end
+
 -- Obtener slot de habilidad por nombre (bilingue EN/ES + Soporte Texturas Custom Servers)
 function PetAI:GetPetAbilitySlot(spellName)
     if not UnitExists("pet") or not spellName then return nil end
@@ -548,28 +587,36 @@ end
 
 function PetAI:ExecuteAbility(spellName)
     if not spellName then return false end
-    if not self:CanCastPetAbility(spellName) then return false end
-    local success = false
-    if CastSpellByName then
-        CastSpellByName(spellName)
-        success = true
-        self:DebugPrint("[Execute] " .. spellName .. " - CastSpellByName")
-    else
-        local slot = self:GetPetAbilitySlot(spellName)
-        if slot then
-            CastPetAction(slot)
-            success = true
-            self:DebugPrint("[Execute] " .. spellName .. " - CastPetAction(" .. slot .. ")")
-        else
-            local cmd = "/cast " .. tostring(spellName)
-            if ChatFrameEditBox then
-                ChatFrameEditBox:SetText(cmd)
-                ChatEdit_SendText(ChatFrameEditBox)
-                success = true
-                self:DebugPrint("[Execute] " .. spellName .. " - ChatFrame (obsoleto)")
-            end
-        end
+    
+    -- El usuario puede no tener la habilidad en la barra, pero intentamos de todos modos
+    local hasSlot = self:CanCastPetAbility(spellName)
+    if not hasSlot then
+        self:DebugPrint("[Execute] " .. spellName .. " no en barra, forzando bypass...")
     end
+    
+    local castName = self:GetExactCastName(spellName)
+    local slot = self:GetPetAbilitySlot(spellName)
+    local success = false
+    
+    -- Prioridad 1: Vanilla nativo por Slot (100% ininmune al idioma si esta en la barra)
+    if slot then
+        CastPetAction(slot)
+        success = true
+        self:DebugPrint("[Execute] " .. spellName .. " - CastPetAction(" .. slot .. ")")
+    -- Prioridad 2: ChatFrameEditBox con macro /cast (el motor del macro resuelve mejor los targeteos)
+    elseif ChatFrameEditBox then
+        local cmd = "/cast " .. tostring(castName)
+        ChatFrameEditBox:SetText(cmd)
+        ChatEdit_SendText(ChatFrameEditBox)
+        success = true
+        self:DebugPrint("[Execute] " .. spellName .. " - ChatFrame (" .. cmd .. ")")
+    -- Prioridad 3: CastSpellByName global fallback
+    elseif CastSpellByName then
+        CastSpellByName(castName)
+        success = true
+        self:DebugPrint("[Execute] " .. spellName .. " (" .. castName .. ") - CastSpellByName")
+    end
+    
     if success then
         self:SetCooldown(spellName, 1.5)
     end
@@ -578,12 +625,15 @@ end
 
 function PetAI:CastEnslaveDemon()
     self:Print("|cffff00ffRe-esclavizando demonio!|r")
+    
+    local castName = self:GetExactCastName("Enslave Demon")
+    
     if CastSpellByName then
-        CastSpellByName("Enslave Demon")
+        CastSpellByName(castName)
         return
     end
     if ChatFrameEditBox then
-        local cmd = "/cast Enslave Demon"
+        local cmd = "/cast " .. castName
         ChatFrameEditBox:SetText(cmd)
         ChatEdit_SendText(ChatFrameEditBox)
     end
@@ -834,6 +884,15 @@ function PetAI:ExecutePetAbilityOnTarget(spellName, targetUnit, targetName)
         oldTargetName = UnitName("target")
     end
     
+    -- 1. Preparar Nombres (Backup Legacy usa Ingles, God-Tier soporta Español)
+    local castNameES = self:GetExactCastName(spellName)
+    local castNameEN = spellName
+    
+    -- 2. Limpiar Pet (Interrumpir Firebolt actual)
+    PetPassiveMode()
+    PetFollow()
+    
+    -- 3. Cambiar Target
     if targetUnit == "player" then
         TargetUnit("player")
     else
@@ -844,19 +903,35 @@ function PetAI:ExecutePetAbilityOnTarget(spellName, targetUnit, targetName)
         return false
     end
     
-    local slot = self:GetPetAbilitySlot(spellName)
-    if slot then
-        CastPetAction(slot)
+    -- 4. Ejecutar vía Macro (Inmune a slots de barra de mascota - Secreto del Backup)
+    if ChatFrameEditBox then
+        -- Primero intentamos el nombre localizado exacto
+        local cmd = "/cast " .. tostring(castNameES)
+        ChatFrameEditBox:SetText(cmd)
+        ChatEdit_SendText(ChatFrameEditBox)
+        
+        -- Fallback inmediato al nombre en inglés (Turtle WoW Friendly)
+        if castNameES ~= castNameEN then
+            local cmdEN = "/cast " .. tostring(castNameEN)
+            ChatFrameEditBox:SetText(cmdEN)
+            ChatEdit_SendText(ChatFrameEditBox)
+        end
+        
+        PetAI:DebugPrint("[ExecuteMacro] " .. spellName .. " (" .. castNameES .. ")")
+        PetAI:Print("|cff00ff00" .. tostring(spellName) .. "|r -> " .. tostring(targetName or targetUnit))
+        PetAI:SetCooldown(spellName, 4)
     end
     
-    self:Print("|cff00ff00" .. tostring(spellName) .. "|r -> " .. tostring(targetName or targetUnit))
-    self:SetCooldown(spellName, 4)
-    
+    -- 5. Restaurar Target con Delay (Como en el backup funcional)
     if hadTarget and oldTargetName then
         self:ScheduleTargetRestore(oldTargetName)
     elseif not hadTarget then
         self:ScheduleClearTarget()
     end
+    
+    -- Re-activar IA defensiva después del casteo instantáneo
+    PetDefensiveMode()
+    
     return true
 end
 

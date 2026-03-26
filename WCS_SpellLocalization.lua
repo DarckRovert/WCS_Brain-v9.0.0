@@ -75,6 +75,7 @@ WCS_SpellLocalization.esES = {
     
     -- Habilidades del Abisario (Voidwalker)
     ["Tormento"] = "Torment",
+    ["Consumir Sombras"] = "Consume Shadows",
     ["Consumir las Sombras"] = "Consume Shadows",
     ["Sacrificio"] = "Sacrifice",
     ["Sufrimiento"] = "Suffering",
