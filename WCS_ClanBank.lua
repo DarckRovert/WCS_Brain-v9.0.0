@@ -60,10 +60,11 @@ function WCS_ClanBank:Initialize()
     panel:SetAllPoints(WCS_ClanUI.MainFrame.content)
     panel:Hide()
     
-    -- Título
+    local isES = (GetLocale() == "esES" or GetLocale() == "esMX")
+    local titleText = isES and "|cffffaa00Inventario Personal|r" or "|cffffaa00Personal Inventory|r"
     local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", 0, -10)
-    title:SetText("|cffffaa00Inventario Personal|r")
+    title:SetText(titleText)
     title:SetFont("Fonts\\FRIZQT__.TTF", 16, "OUTLINE")
     
     -- Panel de oro (arriba)
@@ -77,7 +78,8 @@ function WCS_ClanBank:Initialize()
     
     self.goldText = goldBg:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     self.goldText:SetPoint("CENTER", 0, 10)
-    self.goldText:SetText("Tu Oro: |cffffaa000g 0s 0c|r")
+    local goldLabel = isES and "Tu Oro" or "Your Gold"
+    self.goldText:SetText(goldLabel .. ": |cffffaa000g 0s 0c|r")
     
     -- Botón de actualizar
     local refreshBtn = CreateFrame("Button", nil, goldBg)
