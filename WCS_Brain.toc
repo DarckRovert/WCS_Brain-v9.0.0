@@ -1,8 +1,8 @@
-﻿## Interface: 11200
+## Interface: 11200
 ## Title: |cFF9482C9WCS|r |cFF00FF00Brain|r - Cerebro Central Inteligente
 ## Notes: Sistema de IA para Warlock - Exclusivo de El Sequito del Terror
 ## Notes-esES: Sistema de IA para Warlock - Exclusivo de El Sequito del Terror
-## Author: Elnazzareno (DarckRovert)
+## Author: El Séquito del Terror
 ## X-Guild: El Sequito del Terror
 ## Version: 9.3.1 [God-Tier]
 ## SavedVariables: WCS_BrainSaved, WCS_BrainDQNButtonConfig, WCS_BrainThinkingButtonConfig, WCS_BrainButtonBarConfig, WCS_BrainMetricsSaved, WCS_BrainContextualSaved, WCS_BrainTutorialButtonSaved, WCS_ClanUI_SavedVars, WCS_BankData, WCS_PvPTrackerData, WCS_RaidManagerData, WCS_BrainLearningSaved
