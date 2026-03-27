@@ -1,4 +1,4 @@
-## Interface: 11200
+﻿## Interface: 11200
 ## Title: |cFF9482C9WCS|r |cFF00FF00Brain|r - Cerebro Central Inteligente
 ## Notes: Sistema de IA para Warlock - Exclusivo de El Sequito del Terror
 ## Notes-esES: Sistema de IA para Warlock - Exclusivo de El Sequito del Terror
@@ -10,7 +10,7 @@
 
 
 ## ===========================================
-## ORDEN DE CARGA - Sistema Inteligente v9.3.0
+## ORDEN DE CARGA - Sistema Inteligente v9.3.1
 ## ===========================================
 
 ## HELPERS LUA 5.0 (Cargarse PRIMERO - usado por todo lo demás)
@@ -42,7 +42,7 @@ WCS_BrainThinkingUI.lua
 WCS_BrainThinkingButton.lua
 WCS_BrainButtonBar.lua
 
-## NÚCLEO DEL SISTEMA
+## NÃšCLEO DEL SISTEMA
 WCS_SpellLocalization.lua
 WCS_SpellDB.lua
 WCS_SpellDB_Patch.lua
@@ -58,7 +58,7 @@ WCS_BrainState.lua
 WCS_BrainReward.lua
 WCS_BrainActions.lua
 
-## NUEVOS MÓDULOS
+## NUEVOS MÃ“DULOS
 WCS_BrainTesting.lua
 WCS_BrainMetrics.lua
 WCS_BrainCombatLogger.lua
@@ -69,7 +69,7 @@ WCS_BrainLearning.lua
 ## TERRORMETER INTEGRATION
 WCS_BrainTerrorMeter.lua
 
-## INTEGRACIÓN DQN
+## INTEGRACIÃ“N DQN
 WCS_BrainIntegration.lua
 
 ## SISTEMA DE DECISIONES
@@ -82,7 +82,7 @@ WCS_BrainCombatCache.lua
 WCS_BrainCombatCache_GuardianExt.lua
 WCS_BrainCombatController.lua
 
-## SISTEMA DE EJECUCIÓN AUTOMÁTICA
+## SISTEMA DE EJECUCIÃ“N AUTOMÁTICA
 WCS_BrainAutoExecute.lua
 
 ## CAPTURA AUTOMÁTICA
@@ -135,7 +135,7 @@ WCS_PvPTracker.lua
 ## CORRECCIONES Y PARCHES
 WCS_Lua50_ErrorCheck.lua
 
-## OPTIMIZACIÓN
+## OPTIMIZACIÃ“N
 WCS_UpdateManager.lua
 WCS_Profiler.lua
 WCS_StringOptimizer.lua
