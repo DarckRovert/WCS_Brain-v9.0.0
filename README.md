@@ -1,77 +1,61 @@
-# WCS_Brain — v9.3.1 [God-Tier] ⚔️🛡️
+# WCS_Brain — v9.3.1 [God-Tier] 🧠⚔️
 
-> **El cerebro central de El Séquito del Terror.** Framework unificador de IA y gestión de clan para Turtle WoW.
+> **The ultimate Warlock Control System & Clan Management Engine.** El núcleo inteligente de **El Séquito del Terror** para Turtle WoW.
 
-[![Licencia: MIT](https://img.shields.io/badge/licencia-MIT-blue.svg)](./LICENSE)
-[![Versión](https://img.shields.io/badge/version-9.3.1--God--Tier-purple)](./CHANGELOG.md)
-[![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9C%94-green)](./CODE_OF_CONDUCT.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-9.3.1--God--Tier-purple)](./CHANGELOG.md)
+[![World of Warcraft](https://img.shields.io/badge/WoW-1.12.1-orange)](https://turtle-wow.org)
+[![Discord](https://img.shields.io/badge/Discord-El%20S%C3%A9quito%20del%20Terror-7289DA)](https://discord.gg/your-link)
 
 ---
 
-## 🧠 ¿Qué es WCS_Brain?
+## 🌪️ ¿Qué es WCS_Brain?
 
-WCS_Brain es el núcleo inteligente del ecosistema de addons de **El Séquito del Terror**. Combina IA basada en Deep Q-Network (DQN), gestión de recursos de Warlock, panel de clan y sincronización P2P en una sola interfaz de 14 pestañas.
+**WCS_Brain** no es solo un addon; es un framework unificado de Inteligencia Artificial y gestión táctica. Diseñado originalmente para Warlocks y expandido para el liderazgo de clanes, WCS_Brain utiliza algoritmos de aprendizaje por refuerzo (DQN) para optimizar el combate y sincronización P2P para la logística del clan.
 
-## 🚀 Características Principales
+## 🚀 Características God-Tier
 
-| Módulo | Descripción |
-|---|---|
-| **IA DQN** | Aprendizaje por refuerzo para decisiones tácticas en combate |
-| **Panel de Clan** | Gestión de miembros, rangos y estadísticas en tiempo real |
-| **Banco P2P** | Seguimiento de oro y recursos del clan sin transferencias externas |
-| **HUD Warlock** | Monitor de recursos (soul shards, mana, mascotas) |
-| **TerrorMeter Bridge** | DPS integrado directamente en la UI principal |
-| **Perfiles** | Configuraciones por personaje y role guardadas localmente |
-| **Invocaciones** | Panel de convocatoria de grupo inteligente |
-| **PvP Tracker** | Historial de kills y puntos de honor del clan |
-| **Raid Manager** | Organización táctica de grupos y roles |
-| **Gestor de Macros** | Creación y presets de macros de Warlock |
-| **Sistema de Alertas** | Notificaciones de demonios mayores y eventos de raid |
-| **ButtonBar** | Barra de accesos rápidos configurable |
-| **Grimoire** | Base de conocimiento de hechizos y rotaciones |
-| **Dashboard** | Vista de diagnóstico y performance en tiempo real |
+### 🧠 Inteligencia Artificial DQN (Deep Q-Network)
+Analiza el estado del combate (HP, Mana, Soul Shards, Debuffs del enemigo) para sugerir la acción óptima en tiempo real mediante un botón dinámico de "Pensar".
 
-## ⚙️ Instalación
+### 📊 Gestión de Clan 360°
+Panel con 14 pestañas que integra:
+- **P2P Bank**: Registro de transacciones y recursos de hermandad.
+- **PvP Tracker**: Seguimiento de bajas y honor ganado por miembros del clan.
+- **Raid Logic**: Distribución automática de roles y alertas de mecánicas.
 
-1. Descarga el ZIP desde el repositorio o usa el Turtle WoW Launcher.
-2. Extrae en Interface\AddOns\WCS_Brain\.
-3. Entra al juego y activa el addon desde el menú de AddOns.
-4. Usa /wcsbrain o /wb para abrir el panel principal.
+### 🛡️ Warlock HUD & Pets
+Monitor avanzado de recursos y sistema `TerrorSquadAI` integrado para el control absoluto de demonios y sus habilidades contextuales.
 
-## 💻 Comandos
+## ⚙️ Instalación & Comandos
 
-Ver [COMMANDS.md](./COMMANDS.md) para la lista completa.
+1.  Descarga y extrae en `Interface\AddOns\WCS_Brain\`.
+2.  Asegúrate de que `TerrorMeter` esté instalado para métricas de DPS.
+3.  Usa `/wb` o `/wcsbrain` para invocar el panel principal.
 
 | Comando | Acción |
 |---|---|
-| /wb | Abrir/cerrar panel principal |
-| /wb ai | Panel de IA DQN |
-| /wb clan | Panel de clan |
-| /wb perfiles | Gestión de perfiles |
-| /wb reset | Resetear configuración |
+| `/wb` | Toggle Panel Principal |
+| `/wb ai` | Forzar vista de aprendizaje AI |
+| `/wb clan` | Panel de gestión de hermandad |
+| `/wb reset` | Restaurar configuración de fábrica |
 
-## 🏗️ Arquitectura
+## 🏗️ Suite de Documentación (Wiki)
 
-Ver [ARCHITECTURE.md](./ARCHITECTURE.md) para el diagrama técnico completo.
+Para una comprensión profunda del sistema, consulte nuestra **[Wiki Oficial](./wiki/User_Manual.md)**:
 
-## 📖 Guía de Usuario
+- 📐 **[Arquitectura](./wiki/Architecture.md)**: Diagramas de flujo y lógica de la IA.
+- 🛠️ **[Guía de API](./wiki/API_Guide.md)**: Integración con otros addons del ecosistema.
+- ❓ **[FAQ](./wiki/FAQ.md)**: Solución de problemas comunes.
+- 📖 **[Manual de Usuario](./wiki/User_Manual.md)**: Guía paso a paso desde el nivel 1 al 60.
 
-Ver [GUIA_USUARIO.md](./GUIA_USUARIO.md) para instrucciones detalladas.
+## 🔗 Ecosistema El Séquito del Terror
 
-## 🌐 Integración de Ecosistema
-
-WCS_Brain actúa como hub central para todos los addons:
-- **TerrorMeter** → Métricas de DPS en tiempo real
-- **TerrorSquadAI** → Coordinación táctica de mascotas
-- **HealBot** → Estado de salud del grupo
-- **pfUI** → Integración visual
-- **BigWigs/DoTimer** → Alertas de raid
-
-## 🕸️ Gobernanza
-
-- ⚖️ [Licencia MIT](./LICENSE)
-- 🤝 [Código de Conducta](./CODE_OF_CONDUCT.md)
-- 🛠️ [Guía de Contribución](./CONTRIBUTING.md)
+Este addon es el HUB central. Para una experiencia completa, instale:
+- [TerrorMeter](file:///e:/Turtle%20Wow/Interface/AddOns/TerrorMeter)
+- [TerrorSquadAI](file:///e:/Turtle%20Wow/Interface/AddOns/TerrorSquadAI)
+- [HealBot (Sequito Edition)](file:///e:/Turtle%20Wow/Interface/AddOns/HealBot)
 
 ---
-© 2024 **DarckRovert (Elnazzareno)** — El Séquito del Terror
+© 2026 **DarckRovert (Elnazzareno)** — El Séquito del Terror.
+*Sintaxis Lua 5.0 Estándar para Turtle WoW.*

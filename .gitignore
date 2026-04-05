@@ -1,0 +1,18 @@
+# WoW Addon GitIgnore
+*.toc.bak
+*.lua.bak
+*.xml.bak
+*.DS_Store
+*.swp
+*.tmp
+*~
+
+# Turtle WoW Specifics
+LAST_DEPLOY.txt
+update_versions.ps1
+
+# Editor Settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

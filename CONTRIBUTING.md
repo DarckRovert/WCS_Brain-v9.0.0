@@ -1,14 +1,19 @@
-# Contribuyendo a El Séquito del Terror
+# Contributing to El Séquito del Terror
 
-¡Gracias por tu interés en potenciar nuestro arsenal!
+Thank you for your interest in contributing to our God-Tier arsenal!
 
-## Cómo contribuir
-1. Haz un fork del repositorio.
-2. Crea una rama para tu mejora (git checkout -b feature/mejora).
-3. Envía tus cambios vía Pull Request.
+## Technical Standards
+- **Lua 5.0**: All code must strictly adhere to Lua 5.0 standards for Turtle WoW compatibility.
+- **Prohibited**: Do NOT use the length operator `#`, `math.huge`, or 5.1+ functions.
+- **Stability FIRST**: Any change that breaks the WCS_Brain core will be rejected.
 
-## Estándares
-- Compatibilidad total con **Turtle WoW (Lua 5.0)**.
-- Documentación clara en los commits.
+## Development Workflow
+1.  **Fork** the repository.
+2.  **Branch**: Create a feature branch (`git checkout -b feature/improvement`).
+3.  **Audit**: Perform a virtual syntax check before submitting.
+4.  **PR**: Submit a Pull Request with a clear description of the logic changed.
 
-Lee nuestro [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) antes de empezar.
+## Documentation
+Maintain technical English for comments and system logs. Interface-level changes should support Spanish.
+
+Refer to our [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) for community standards.
